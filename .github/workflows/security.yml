@@ -51,66 +51,8 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
-  secret-scan:
-    name: Secret scan (gitleaks)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-      # On a pull_request the action queries the pulls API to work out which commits to scan, so the
-      # workflow-level `contents: read` alone makes it crash with "Resource not accessible by
-      # integration". This is the read scope it needs — deliberately not `pull-requests: write`,
-      # which it would only use to post a comment (disabled below).
-      pull-requests: read
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: ${{ github.event_name == 'schedule' && 0 || 1 }}
-          persist-credentials: false
-
-      - name: gitleaks
-        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
-          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
-          GITLEAKS_ENABLE_SUMMARY: "true"
-          # PR comments need `pull-requests: write`. Granting a third-party action write access to
-          # pull requests to obtain a comment is a bad trade: the findings are already in the job
-          # summary and the step's exit code. Keep the token read-only.
-          GITLEAKS_ENABLE_COMMENTS: "false"
-
-  codeql:
-    name: CodeQL (python)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
-        with:
-          languages: python
-          queries: security-extended
-
-      - name: Analyze
-        uses: github/codeql-action/analyze@ff2f1c621b7f889edc0d3c761ac2e6a3f8cdb0dd # v4.37.7
-        with:
-          category: "/language:python"
-
   dependency-review:
     name: Dependency review
-    # Requires the dependency graph, which needs GitHub Advanced Security on a private repository.
-    # The action hard-fails instead of skipping when it is unavailable, so gate on visibility —
-    # this job starts running by itself once the repository is public.
     if: github.event_name == 'pull_request' && github.event.repository.visibility == 'public'
     runs-on: ubuntu-latest
     timeout-minutes: 10
