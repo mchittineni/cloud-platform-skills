@@ -1,0 +1,10 @@
+{
+  "name": "04-cloud-aws",
+  "description": "AWS Cloud Architecture: 4 production-grade skills (aws-cloud-migration-strategies, aws-eks-enterprise-patterns, aws-iam-zero-trust-policies...)",
+  "version": "1.0.0",
+  "author": "mchittineni",
+  "homepage": "https://github.com/mchittineni/cloud-platform-skills",
+  "repository": "https://github.com/mchittineni/cloud-platform-skills",
+  "license": "MIT",
+  "skills": "./"
+}

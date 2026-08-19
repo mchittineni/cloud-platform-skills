@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "aws-cloud-migration-strategies",
+  "version": "1.0.0",
+  "must_cover": [
+    "6R",
+    "Rehost",
+    "Refactor",
+    "wave",
+    "DMS",
+    "CDC",
+    "rollback"
+  ],
+  "cases": [
+    {
+      "id": "aws-cloud-migration-strategies-t1",
+      "prompt": "We have 180 apps in two datacenters and a lease expiring in 14 months. How do we plan the move to AWS?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Applies the 6Rs framework per application with explicit selection criteria, not a blanket lift-and-shift",
+        "Plans discovery, dependency mapping and migration waves with cutover windows",
+        "Uses MGN/DMS with CDC replication and defines rollback criteria for cutover"
+      ]
+    },
+    {
+      "id": "aws-cloud-migration-strategies-t2",
+      "prompt": "Should this legacy Java monolith be rehosted or refactored?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Applies the 6Rs framework per application with explicit selection criteria, not a blanket lift-and-shift",
+        "Plans discovery, dependency mapping and migration waves with cutover windows",
+        "Uses MGN/DMS with CDC replication and defines rollback criteria for cutover"
+      ]
+    },
+    {
+      "id": "aws-cloud-migration-strategies-t3",
+      "prompt": "Migrate a 3TB Oracle database to AWS with minimal downtime.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Applies the 6Rs framework per application with explicit selection criteria, not a blanket lift-and-shift",
+        "Plans discovery, dependency mapping and migration waves with cutover windows",
+        "Uses MGN/DMS with CDC replication and defines rollback criteria for cutover"
+      ]
+    },
+    {
+      "id": "aws-cloud-migration-strategies-n1",
+      "prompt": "Optimize our existing AWS bill and buy the right commitments",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "aws-cloud-migration-strategies-n2",
+      "prompt": "Design the EKS cluster we'll land these workloads on",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

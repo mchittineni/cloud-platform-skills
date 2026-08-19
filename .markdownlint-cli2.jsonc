@@ -1,0 +1,103 @@
+// markdownlint-cli2 configuration — https://github.com/DavidAnson/markdownlint-cli2
+//
+//   npx markdownlint-cli2                 # lint
+//   npx markdownlint-cli2 --fix           # autofix what is safely fixable
+//
+// Scope: the AUTHORED markdown surface only. Generated trees (.claude/skills, .agents/skills,
+// .cursor/rules, docs/) are excluded because linting them reports every finding three or four
+// times and their content is not editable — fix the source in skills/ and re-run sync-all.py.
+{
+  "globs": [
+    "**/*.md",
+    "!node_modules",
+    "!.venv-lint",
+    "!.claude/skills",
+    "!.agents/skills",
+    "!.cursor/rules",
+    "!docs",
+    "!site"
+  ],
+
+  "ignores": [
+    "node_modules/**",
+    ".venv-lint/**",
+    ".claude/skills/**",
+    ".agents/skills/**",
+    ".cursor/rules/**",
+    "docs/**",
+    "site/**",
+    // Generated agent entrypoints — regenerate with scripts/sync-all.py, never hand-edit.
+    "AGENTS.md",
+    "CLAUDE.md",
+    ".agents/rules/**",
+    ".github/copilot-instructions.md"
+  ],
+
+  "config": {
+    "default": true,
+
+    // ---------------------------------------------------------------- line length
+    // MD013 is DISABLED deliberately, not by neglect.
+    //
+    // Three reasons specific to this repository:
+    //   1. `must_cover` anchors in evals/evals.json are substring-matched against the skill body.
+    //      A hard reflow can split an anchor ("sync wave") across a newline and silently break the
+    //      content-coverage gate — a lint rule must not be able to defeat a correctness gate.
+    //   2. Skill bodies are dense reference tables and annotated code, where the character budget
+    //      is already spent on the content, not on prose width.
+    //   3. `.editorconfig` sets max_line_length = 100 as editor guidance, which is where soft
+    //      enforcement belongs for prose.
+    //
+    // 98 authored prose lines currently exceed 120 characters. Enabling this rule requires a
+    // dedicated reflow pass verified by `make check` (so a split anchor fails loudly), not a
+    // config flip. Until then the rule stays off rather than being permanently suppressed by an
+    // unreachable limit.
+    "MD013": false,
+
+    // ---------------------------------------------------------------- structure
+    "MD003": { "style": "atx" },
+    "MD004": { "style": "dash" },
+    "MD007": { "indent": 2 },
+    "MD022": true,
+    "MD024": { "siblings_only": true },
+    "MD025": { "front_matter_title": "" },
+    "MD029": { "style": "ordered" },
+    "MD035": { "style": "---" },
+    // Compact, not aligned: the skill index tables carry 300-character "Load when" cells, so
+    // `aligned` would pad every row in every table to that width — enormous diffs that re-break on
+    // each edit. Compact matches what the content already does and what the generators emit.
+    "MD060": { "style": "compact" },
+
+    "MD048": { "style": "backtick" },
+    "MD049": { "style": "underscore" }, // matches the authored style; ** stays for strong
+    "MD050": { "style": "asterisk" },
+
+    // Every fenced block must declare a language: unlabelled blocks lose syntax highlighting on
+    // the docs site AND make `scripts/compliance-check.py` code-vs-prose separation less reliable.
+    "MD040": { "allowed_languages": [], "language_only": true },
+
+    // ---------------------------------------------------------------- allowances
+    // HTML is used deliberately: <details> for collapsible gate output in the PR template, and
+    // HTML comments for the machine-read markers `agent-safety-justified` and
+    // `line-budget-justified` that the compliance gate parses.
+    "MD033": {
+      "allowed_elements": ["details", "summary", "br", "img", "kbd", "sup"]
+    },
+
+    // Skill bodies open with YAML front matter, then an H1. Front matter is stripped before
+    // linting, so MD041 stays on and correctly requires the H1.
+    "MD041": { "front_matter_title": "", "level": 1 },
+
+    // Bare URLs are fine inside code fences (already exempt) and in link-reference contexts.
+    "MD034": true,
+
+    // Trailing punctuation in headings is a real typo signal; ":" is allowed for "Note:" style.
+    "MD026": { "punctuation": ".,;!。，；！" },
+
+    // Emphasis-as-heading is a genuine structural smell in reference docs.
+    "MD036": { "punctuation": ".,;:!?。，；：！？" },
+
+    // First-line-in-file and file-ends-newline are enforced by .editorconfig + pre-commit.
+    "MD047": true
+  }
+}

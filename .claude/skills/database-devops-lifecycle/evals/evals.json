@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "database-devops-lifecycle",
+  "version": "1.0.0",
+  "must_cover": [
+    "expand",
+    "contract",
+    "backfill",
+    "Flyway",
+    "replication lag"
+  ],
+  "cases": [
+    {
+      "id": "database-devops-lifecycle-t1",
+      "prompt": "We need to rename a column on a 400M-row Postgres table without downtime.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses the expand/contract pattern: add, dual-write/backfill, switch reads, then drop",
+        "Keeps migrations versioned, reviewed and executed by the pipeline (Flyway/Liquibase/Atlas)",
+        "Avoids blocking DDL and states the rollback path for each phase"
+      ]
+    },
+    {
+      "id": "database-devops-lifecycle-t2",
+      "prompt": "How do I run Flyway migrations from our deploy pipeline safely?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses the expand/contract pattern: add, dual-write/backfill, switch reads, then drop",
+        "Keeps migrations versioned, reviewed and executed by the pipeline (Flyway/Liquibase/Atlas)",
+        "Avoids blocking DDL and states the rollback path for each phase"
+      ]
+    },
+    {
+      "id": "database-devops-lifecycle-t3",
+      "prompt": "Our read replicas are 4 minutes behind and users see stale data. What should I look at?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses the expand/contract pattern: add, dual-write/backfill, switch reads, then drop",
+        "Keeps migrations versioned, reviewed and executed by the pipeline (Flyway/Liquibase/Atlas)",
+        "Avoids blocking DDL and states the rollback path for each phase"
+      ]
+    },
+    {
+      "id": "database-devops-lifecycle-n1",
+      "prompt": "Design a cross-region backup and restore strategy with defined RPO and RTO",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "database-devops-lifecycle-n2",
+      "prompt": "How do I load test our checkout API to find its breaking point?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

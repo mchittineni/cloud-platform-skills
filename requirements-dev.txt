@@ -1,0 +1,4 @@
+# Documentation site only. The skill gates (validate-skills.py, run-evals.py,
+# compliance-check.py, sync-all.py, generate-docs.py) are stdlib-only and need nothing here.
+mkdocs==1.6.1
+mkdocs-material==9.7.7

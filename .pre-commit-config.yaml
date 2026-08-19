@@ -1,0 +1,93 @@
+# Pre-commit hooks for cloud-platform-skills.
+#
+#   pip install pre-commit && pre-commit install
+#   pre-commit run --all-files
+#
+# The repo-local hooks are the same gates CI runs — they are stdlib-only, so they need no
+# environment beyond Python 3.10+.
+
+default_install_hook_types: [pre-commit, commit-msg]
+fail_fast: false
+
+repos:
+  # ---------------------------------------------------------------- hygiene
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+        exclude: ^\.cursor/rules/
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude: ^(docs/|\.claude/skills/|\.agents/skills/|\.cursor/rules/)
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+        exclude: ^(docs/|\.claude/skills/|\.agents/skills/|\.cursor/rules/)
+      - id: mixed-line-ending
+        args: [--fix=lf]
+
+  # ---------------------------------------------------------------- secrets, before history
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        # Generate the baseline once with: make secrets-baseline
+        args: ["--baseline", ".secrets.baseline"]
+        exclude: ^(docs/|\.claude/skills/|\.agents/skills/|\.cursor/rules/|\.gitleaks\.toml|scripts/compliance-check\.py)
+
+  # ---------------------------------------------------------------- shell
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.9.0
+    hooks:
+      - id: shellcheck
+        args: [--severity=warning]
+
+  # ---------------------------------------------------------------- repo gates (stdlib only)
+  - repo: local
+    hooks:
+      - id: validate-skills
+        name: validate skills (structure, frontmatter, mirrors)
+        entry: python3 scripts/validate-skills.py --check-sync --strict
+        language: system
+        pass_filenames: false
+        files: ^(skills/|\.claude/skills/|\.agents/skills/)
+
+      - id: run-evals
+        name: routing and content-coverage evals
+        entry: python3 scripts/run-evals.py --min-pass-rate 95
+        language: system
+        pass_filenames: false
+        files: ^skills/
+
+      - id: compliance-check
+        name: 8-point compliance gate (agent safety, secrets, accuracy)
+        entry: python3 scripts/compliance-check.py
+        language: system
+        pass_filenames: false
+        files: ^skills/
+
+      - id: audit-workflows
+        name: workflow security audit
+        entry: python3 scripts/audit-workflows.py
+        language: system
+        pass_filenames: false
+        files: ^\.github/(workflows/|actions-allowlist\.txt)
+
+      - id: sync-all
+        name: generated runtime targets are up to date
+        entry: python3 scripts/sync-all.py --check
+        language: system
+        pass_filenames: false
+        files: ^(skills/|scripts/sync-all\.py)
+
+      - id: generate-docs
+        name: generated documentation is up to date
+        entry: python3 scripts/generate-docs.py --check
+        language: system
+        pass_filenames: false
+        files: ^(skills/|scripts/generate-docs\.py)

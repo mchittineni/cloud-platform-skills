@@ -1,0 +1,69 @@
+# gitleaks configuration for cloud-platform-skills
+#
+# This repository is documentation: it is *full* of credential-shaped example strings by design.
+# A scanner that flags every placeholder gets muted, and then it detects nothing — so the rules
+# below keep the real-credential detections and allowlist only provably-fake material.
+
+title = "cloud-platform-skills"
+
+[extend]
+useDefault = true
+
+# ---------------------------------------------------------------- global allowlist
+[allowlist]
+description = "Documentation placeholders and canonical AWS example values"
+regexTarget = "match"
+regexes = [
+  # AWS's own documentation example key — appears in IAM/SCP teaching material.
+  '''AKIAIOSFODNN7EXAMPLE''',
+  '''wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY''',
+  # Obvious placeholders.
+  '''(?i)(example|sample|placeholder|redacted|changeme|dummy|fake|test-token|REPLACE[-_]ME)''',
+  '''(?i)your[-_](api[-_]key|token|secret|password)''',
+  # Template interpolation — the value is never in the file.
+  '''\$\{[^}]+\}''',
+  '''\{\{[^}]+\}\}''',
+  '''<[A-Za-z0-9_-]+>''',
+  # Truncated illustrative values.
+  '''(AKIA|ASIA|arn:aws)[A-Za-z0-9:/_-]*\.\.\.''',
+  '''sk-[A-Za-z0-9]{0,8}\.\.\.''',
+]
+
+paths = [
+  # Generated mirrors duplicate skills/ verbatim; scanning them triples every finding.
+  '''^\.claude/skills/''',
+  '''^\.agents/skills/''',
+  '''^\.cursor/rules/''',
+  '''^docs/''',
+  '''^AGENTS\.md$''',
+  '''^CLAUDE\.md$''',
+  '''^\.github/copilot-instructions\.md$''',
+  # This file documents the patterns it detects.
+  '''^\.gitleaks\.toml$''',
+  '''^SECURITY\.md$''',
+  # Detection patterns live in the gate itself.
+  '''^scripts/compliance-check\.py$''',
+]
+
+# ---------------------------------------------------------------- sharpened rules
+# Skill bodies legitimately contain the *names* of secret-bearing fields while teaching how to
+# avoid storing values in them. Require a value that looks real, not a reference.
+[[rules]]
+id = "generic-credential-with-real-value"
+description = "Credential assignment whose value is neither a placeholder nor an interpolation"
+regex = '''(?i)(password|passwd|secret|api[-_]?key|token|credential)\s*[:=]\s*["'][^"'${}<>\s]{16,}["']'''
+entropy = 3.5
+keywords = ["password", "secret", "api_key", "apikey", "token", "credential"]
+
+  [rules.allowlist]
+  regexTarget = "match"
+  regexes = [
+    '''(?i)(example|sample|placeholder|redacted|changeme|dummy|fake|expects|must|should|never|rotate)''',
+    '''(?i)(vault:|secretRef|valueFrom|secretKeyRef|externalSecret|env:|os\.environ|get_secret)''',
+  ]
+
+[[rules]]
+id = "private-key-material"
+description = "PEM private key block"
+regex = '''-----BEGIN (RSA |EC |DSA |OPENSSH |PGP )?PRIVATE KEY( BLOCK)?-----'''
+keywords = ["-----BEGIN"]

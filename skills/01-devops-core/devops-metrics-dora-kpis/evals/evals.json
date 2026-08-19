@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "devops-metrics-dora-kpis",
+  "version": "1.0.0",
+  "must_cover": [
+    "Deployment Frequency",
+    "Lead Time",
+    "Change Failure Rate",
+    "Restore",
+    "gaming"
+  ],
+  "cases": [
+    {
+      "id": "devops-metrics-dora-kpis-t1",
+      "prompt": "Leadership wants a DORA dashboard \u2014 what exactly do I measure and from which data?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines all four DORA metrics precisely (deployment frequency, lead time, change failure rate, time to restore)",
+        "Supplies concrete PromQL/data-source wiring rather than abstract advice",
+        "Warns against gaming metrics or using them for individual performance review"
+      ]
+    },
+    {
+      "id": "devops-metrics-dora-kpis-t2",
+      "prompt": "Our change failure rate is 30%. How do we bring it down?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines all four DORA metrics precisely (deployment frequency, lead time, change failure rate, time to restore)",
+        "Supplies concrete PromQL/data-source wiring rather than abstract advice",
+        "Warns against gaming metrics or using them for individual performance review"
+      ]
+    },
+    {
+      "id": "devops-metrics-dora-kpis-t3",
+      "prompt": "Give me PromQL for deployment frequency and MTTR.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines all four DORA metrics precisely (deployment frequency, lead time, change failure rate, time to restore)",
+        "Supplies concrete PromQL/data-source wiring rather than abstract advice",
+        "Warns against gaming metrics or using them for individual performance review"
+      ]
+    },
+    {
+      "id": "devops-metrics-dora-kpis-n1",
+      "prompt": "Define SLIs and error budgets for our API",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "devops-metrics-dora-kpis-n2",
+      "prompt": "How do we allocate cloud cost per team?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

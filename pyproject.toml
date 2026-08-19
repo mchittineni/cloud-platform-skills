@@ -1,0 +1,103 @@
+# cloud-platform-skills — tooling configuration.
+#
+# There is intentionally NO [project] table and no build backend: this repository is not a
+# distributable package. It ships skills (markdown) and stdlib-only gate scripts that are executed
+# in place. Adding packaging metadata would imply `pip install .` works and invite a dependency
+# tree that the compliance gate exists to prevent.
+#
+# Runtime contract for everything in scripts/ and skills/**/scripts/:
+#   * Python 3.10+
+#   * standard library only — enforced by scripts/compliance-check.py (point 4)
+#   * no network access, no LLM calls
+#
+# Development tooling (ruff, prettier, markdownlint) is optional and never required to run a gate.
+
+# ---------------------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 110              # matches .editorconfig [*.py] max_line_length
+target-version = "py310"       # oldest supported runtime; also the CI matrix floor
+src = ["scripts"]
+extend-exclude = [
+  ".claude/skills",
+  ".agents/skills",
+  ".cursor/rules",
+  "docs",
+  "site",
+]
+
+[tool.ruff.lint]
+select = [
+  "F",      # pyflakes — real defects: undefined names, unused imports, f-string bugs
+  "E",      # pycodestyle errors
+  "W",      # pycodestyle warnings
+  "I",      # isort — deterministic import order
+  "UP",     # pyupgrade — keep syntax current with target-version
+  "B",      # flake8-bugbear — mutable defaults, loop-variable binding, silent except
+  "C4",     # comprehensions
+  "SIM",    # flake8-simplify
+  "PTH",    # prefer pathlib over os.path (the codebase already does)
+  "RET",    # return-statement hygiene
+  "ARG",    # unused arguments
+  "S",      # bandit — security lint; see per-file ignores below
+  "RUF",    # ruff-specific
+]
+
+ignore = [
+  "E501",   # line length is enforced by the formatter, not the linter (avoids double reporting)
+  "S101",   # `assert` is fine in generator scripts that are not user-facing
+  "SIM108", # ternary-instead-of-if is not always more readable
+  "RET504", # a named result before `return` often documents intent
+]
+
+[tool.ruff.lint.per-file-ignores]
+# The gate scripts must contain the very patterns they detect — credential shapes, destructive
+# command regexes, prompt-injection strings. Bandit rules would flag the detection library itself.
+"scripts/compliance-check.py" = ["S105", "S106", "S107", "E501"]
+"scripts/audit-workflows.py"  = ["S105", "E501"]
+# Templates are illustrative scaffolding, not executed code.
+"templates/**" = ["ALL"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["scripts"]
+force-sort-within-sections = true
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["pathlib.Path"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
+docstring-code-line-length = 100
+
+# ---------------------------------------------------------------------------- mypy (optional)
+[tool.mypy]
+python_version = "3.10"
+files = ["scripts"]
+strict = false                 # these are operational scripts, not a typed library
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+no_implicit_optional = true
+check_untyped_defs = true
+exclude = "(^docs/|^site/|^\\.claude/|^\\.agents/|^\\.cursor/|^templates/)"
+
+# ---------------------------------------------------------------------------- pytest (reserved)
+# No test suite exists yet: the gates ARE the test suite, and they self-verify
+# (scripts/run-evals.py grades the library, scripts/compliance-check.py is probe-tested).
+# When unit tests for the gate scripts are added, they belong in tests/ under this config.
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+
+# ---------------------------------------------------------------------------- coverage (reserved)
+[tool.coverage.run]
+source = ["scripts"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:", "raise NotImplementedError"]

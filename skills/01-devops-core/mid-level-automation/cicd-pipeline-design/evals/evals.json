@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "cicd-pipeline-design",
+  "version": "1.0.0",
+  "must_cover": [
+    "OIDC",
+    "matrix",
+    "cache",
+    "concurrency"
+  ],
+  "cases": [
+    {
+      "id": "cicd-pipeline-design-t1",
+      "prompt": "Set up a GitHub Actions pipeline for our service with tests, image build, and a security gate.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Replaces static cloud credentials with OIDC short-lived role assumption",
+        "Uses matrix testing plus dependency caching keyed on a lockfile hash",
+        "Places security scanning as an explicit gate with defined failure thresholds"
+      ]
+    },
+    {
+      "id": "cicd-pipeline-design-t2",
+      "prompt": "We have AWS access keys stored as GitHub secrets \u2014 how do we get rid of them?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Replaces static cloud credentials with OIDC short-lived role assumption",
+        "Uses matrix testing plus dependency caching keyed on a lockfile hash",
+        "Places security scanning as an explicit gate with defined failure thresholds"
+      ]
+    },
+    {
+      "id": "cicd-pipeline-design-t3",
+      "prompt": "Our CI takes 30 minutes because every job reinstalls dependencies. How do I fix the caching?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Replaces static cloud credentials with OIDC short-lived role assumption",
+        "Uses matrix testing plus dependency caching keyed on a lockfile hash",
+        "Places security scanning as an explicit gate with defined failure thresholds"
+      ]
+    },
+    {
+      "id": "cicd-pipeline-design-n1",
+      "prompt": "How do we do a canary rollout with automatic rollback in Kubernetes?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "cicd-pipeline-design-n2",
+      "prompt": "What branching strategy should our team adopt?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "gitops-multi-cluster-argo-flux",
+  "version": "1.0.0",
+  "must_cover": [
+    "ApplicationSet",
+    "sync wave",
+    "selfHeal",
+    "prune",
+    "promotion"
+  ],
+  "cases": [
+    {
+      "id": "gitops-multi-cluster-argo-flux-t1",
+      "prompt": "We're going from 3 to 20 clusters \u2014 how do I manage app deployment without 20 copies of everything?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses ApplicationSets or app-of-apps generators instead of duplicating Applications per cluster",
+        "Explains sync waves, prune and self-heal semantics for the drift problem",
+        "Defines a promotion topology (overlays/branches/paths) with Git as the single source of truth"
+      ]
+    },
+    {
+      "id": "gitops-multi-cluster-argo-flux-t2",
+      "prompt": "An ArgoCD Application is stuck OutOfSync and self-heal keeps fighting a controller. What's happening?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses ApplicationSets or app-of-apps generators instead of duplicating Applications per cluster",
+        "Explains sync waves, prune and self-heal semantics for the drift problem",
+        "Defines a promotion topology (overlays/branches/paths) with Git as the single source of truth"
+      ]
+    },
+    {
+      "id": "gitops-multi-cluster-argo-flux-t3",
+      "prompt": "How should we structure repos and branches to promote a release from staging to prod?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses ApplicationSets or app-of-apps generators instead of duplicating Applications per cluster",
+        "Explains sync waves, prune and self-heal semantics for the drift problem",
+        "Defines a promotion topology (overlays/branches/paths) with Git as the single source of truth"
+      ]
+    },
+    {
+      "id": "gitops-multi-cluster-argo-flux-n1",
+      "prompt": "Write the Helm chart itself for this service",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "gitops-multi-cluster-argo-flux-n2",
+      "prompt": "How do I do a metric-gated canary with automatic rollback?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

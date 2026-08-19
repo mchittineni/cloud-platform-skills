@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "aws-iam-zero-trust-policies",
+  "version": "1.0.0",
+  "must_cover": [
+    "Service Control Polic",
+    "permission boundar",
+    "condition",
+    "ABAC",
+    "ExternalId",
+    "sts:AssumeRole"
+  ],
+  "cases": [
+    {
+      "id": "aws-iam-zero-trust-policies-t1",
+      "prompt": "Write an SCP that stops any account from disabling CloudTrail or creating public S3 buckets.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Distinguishes SCPs, permission boundaries and identity/resource policies and applies the right one",
+        "Uses condition keys and tag-based ABAC for scalable least privilege",
+        "Constrains role trust policies (external ID, OIDC subject conditions) rather than wildcard principals"
+      ]
+    },
+    {
+      "id": "aws-iam-zero-trust-policies-t2",
+      "prompt": "This role has AdministratorAccess. How do I scope it down without breaking the app?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Distinguishes SCPs, permission boundaries and identity/resource policies and applies the right one",
+        "Uses condition keys and tag-based ABAC for scalable least privilege",
+        "Constrains role trust policies (external ID, OIDC subject conditions) rather than wildcard principals"
+      ]
+    },
+    {
+      "id": "aws-iam-zero-trust-policies-t3",
+      "prompt": "Set up cross-account access for our CI to deploy into prod.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Distinguishes SCPs, permission boundaries and identity/resource policies and applies the right one",
+        "Uses condition keys and tag-based ABAC for scalable least privilege",
+        "Constrains role trust policies (external ID, OIDC subject conditions) rather than wildcard principals"
+      ]
+    },
+    {
+      "id": "aws-iam-zero-trust-policies-n1",
+      "prompt": "Audit all our accounts against the CIS benchmark and rank the findings",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "aws-iam-zero-trust-policies-n2",
+      "prompt": "Where should we store the application's database credentials?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

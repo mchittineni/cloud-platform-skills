@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "cloud-security-posture-cspm-cis",
+  "version": "1.0.0",
+  "must_cover": [
+    "prowler",
+    "CIS",
+    "least privilege",
+    "exception",
+    "blast radius"
+  ],
+  "cases": [
+    {
+      "id": "cloud-security-posture-cspm-cis-t1",
+      "prompt": "Run a security posture audit across our AWS, Azure and GCP accounts and tell me what's critical.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Prowler/ScoutSuite against CIS benchmark checks per cloud",
+        "Prioritizes findings by exploitability and blast radius rather than listing raw counts",
+        "Defines a remediation and exception workflow with owners and expiry"
+      ]
+    },
+    {
+      "id": "cloud-security-posture-cspm-cis-t2",
+      "prompt": "We have a CIS benchmark review in three weeks. Where are we exposed?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Prowler/ScoutSuite against CIS benchmark checks per cloud",
+        "Prioritizes findings by exploitability and blast radius rather than listing raw counts",
+        "Defines a remediation and exception workflow with owners and expiry"
+      ]
+    },
+    {
+      "id": "cloud-security-posture-cspm-cis-t3",
+      "prompt": "How do I find over-permissive IAM across hundreds of roles?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Prowler/ScoutSuite against CIS benchmark checks per cloud",
+        "Prioritizes findings by exploitability and blast radius rather than listing raw counts",
+        "Defines a remediation and exception workflow with owners and expiry"
+      ]
+    },
+    {
+      "id": "cloud-security-posture-cspm-cis-n1",
+      "prompt": "Write the SCP that prevents these misconfigurations in the first place",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "cloud-security-posture-cspm-cis-n2",
+      "prompt": "Our EC2 instance is compromised \u2014 contain it now",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

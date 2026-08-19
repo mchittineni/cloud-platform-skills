@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "scalability-high-availability-patterns",
+  "version": "1.0.0",
+  "must_cover": [
+    "multi-AZ",
+    "circuit breaker",
+    "bulkhead",
+    "jitter",
+    "rate limit",
+    "HPA",
+    "KEDA"
+  ],
+  "cases": [
+    {
+      "id": "scalability-high-availability-patterns-t1",
+      "prompt": "Design our service so it keeps serving if an entire availability zone goes down.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Specifies multi-AZ (or active-active) topology with health-checked failover and no single point of failure",
+        "Adds overload protection: circuit breakers, bulkheads, timeouts, retries with jitter, and rate limiting",
+        "Uses HPA/KEDA on custom or event-driven metrics with sane min/max and stabilization windows"
+      ]
+    },
+    {
+      "id": "scalability-high-availability-patterns-t2",
+      "prompt": "Our service collapses under traffic spikes and takes downstream services with it. What patterns do I need?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Specifies multi-AZ (or active-active) topology with health-checked failover and no single point of failure",
+        "Adds overload protection: circuit breakers, bulkheads, timeouts, retries with jitter, and rate limiting",
+        "Uses HPA/KEDA on custom or event-driven metrics with sane min/max and stabilization windows"
+      ]
+    },
+    {
+      "id": "scalability-high-availability-patterns-t3",
+      "prompt": "How do I autoscale on queue depth instead of CPU?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Specifies multi-AZ (or active-active) topology with health-checked failover and no single point of failure",
+        "Adds overload protection: circuit breakers, bulkheads, timeouts, retries with jitter, and rate limiting",
+        "Uses HPA/KEDA on custom or event-driven metrics with sane min/max and stabilization windows"
+      ]
+    },
+    {
+      "id": "scalability-high-availability-patterns-n1",
+      "prompt": "We lost the primary region entirely \u2014 what's the recovery procedure?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "scalability-high-availability-patterns-n2",
+      "prompt": "Write a k6 test to find our throughput limit",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

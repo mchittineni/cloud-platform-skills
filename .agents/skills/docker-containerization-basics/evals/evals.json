@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "docker-containerization-basics",
+  "version": "1.0.0",
+  "must_cover": [
+    "multi-stage",
+    "distroless",
+    "USER ",
+    "non-root",
+    "layer cach"
+  ],
+  "cases": [
+    {
+      "id": "docker-containerization-basics-t1",
+      "prompt": "Our Node image is 1.2 GB and takes 9 minutes to build \u2014 how do I make it smaller and faster?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses a multi-stage build so compilers and build deps never reach the runtime image",
+        "Orders COPY/RUN layers so dependency manifests are cached before source code",
+        "Sets a non-root USER and a minimal or distroless runtime base"
+      ]
+    },
+    {
+      "id": "docker-containerization-basics-t2",
+      "prompt": "Review this Dockerfile before it goes to production: it runs as root and copies the whole repo in one layer.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses a multi-stage build so compilers and build deps never reach the runtime image",
+        "Orders COPY/RUN layers so dependency manifests are cached before source code",
+        "Sets a non-root USER and a minimal or distroless runtime base"
+      ]
+    },
+    {
+      "id": "docker-containerization-basics-t3",
+      "prompt": "What base image should I use for a compiled Go binary if I want minimal attack surface?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses a multi-stage build so compilers and build deps never reach the runtime image",
+        "Orders COPY/RUN layers so dependency manifests are cached before source code",
+        "Sets a non-root USER and a minimal or distroless runtime base"
+      ]
+    },
+    {
+      "id": "docker-containerization-basics-n1",
+      "prompt": "Falco is alerting on 'shell spawned in container' \u2014 how do I triage that?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "docker-containerization-basics-n2",
+      "prompt": "How do I template this Kubernetes deployment across three environments?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

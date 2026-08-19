@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "internal-developer-portal-backstage",
+  "version": "1.0.0",
+  "must_cover": [
+    "scaffolder",
+    "catalog-info",
+    "Component",
+    "owner",
+    "golden path",
+    "adoption"
+  ],
+  "cases": [
+    {
+      "id": "internal-developer-portal-backstage-t1",
+      "prompt": "We want developers to spin up a new production-ready service in one click. How do we build that?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines a Golden Path scaffolder template wired to real CI/CD, ownership and infrastructure",
+        "Models the catalog entities (Component, System, Owner) so ownership is unambiguous",
+        "Treats the platform as a product with adoption/DevEx metrics rather than mandate"
+      ]
+    },
+    {
+      "id": "internal-developer-portal-backstage-t2",
+      "prompt": "Write a Backstage scaffolder template for our standard Go service.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines a Golden Path scaffolder template wired to real CI/CD, ownership and infrastructure",
+        "Models the catalog entities (Component, System, Owner) so ownership is unambiguous",
+        "Treats the platform as a product with adoption/DevEx metrics rather than mandate"
+      ]
+    },
+    {
+      "id": "internal-developer-portal-backstage-t3",
+      "prompt": "Nobody uses our internal platform. How do we measure and improve adoption?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines a Golden Path scaffolder template wired to real CI/CD, ownership and infrastructure",
+        "Models the catalog entities (Component, System, Owner) so ownership is unambiguous",
+        "Treats the platform as a product with adoption/DevEx metrics rather than mandate"
+      ]
+    },
+    {
+      "id": "internal-developer-portal-backstage-n1",
+      "prompt": "Design the ArgoCD topology that the platform will deploy through",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "internal-developer-portal-backstage-n2",
+      "prompt": "Measure our DORA metrics for leadership",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

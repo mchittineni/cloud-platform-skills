@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "terraform-iac-modules",
+  "version": "1.0.0",
+  "must_cover": [
+    "dynamodb_table",
+    "encrypt",
+    "drift",
+    "version"
+  ],
+  "cases": [
+    {
+      "id": "terraform-iac-modules-t1",
+      "prompt": "How should I structure a Terraform repo for a team of 15 with dev/stage/prod?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Configures remote state with locking and encryption at rest",
+        "Separates reusable modules from thin per-environment root configurations",
+        "Pins provider and module versions instead of floating them"
+      ]
+    },
+    {
+      "id": "terraform-iac-modules-t2",
+      "prompt": "Two engineers ran apply at the same time and corrupted our state file. How do we prevent that?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Configures remote state with locking and encryption at rest",
+        "Separates reusable modules from thin per-environment root configurations",
+        "Pins provider and module versions instead of floating them"
+      ]
+    },
+    {
+      "id": "terraform-iac-modules-t3",
+      "prompt": "terraform plan shows changes nobody made \u2014 how do I find and fix the drift?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Configures remote state with locking and encryption at rest",
+        "Separates reusable modules from thin per-environment root configurations",
+        "Pins provider and module versions instead of floating them"
+      ]
+    },
+    {
+      "id": "terraform-iac-modules-n1",
+      "prompt": "We copy-paste Terraform across 40 AWS accounts, how do we DRY it up and enforce policy?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "terraform-iac-modules-n2",
+      "prompt": "Write an Ansible role to harden our Ubuntu VMs",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

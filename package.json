@@ -1,0 +1,21 @@
+{
+  "name": "cloud-platform-skills",
+  "version": "1.0.0",
+  "description": "Lint tooling for the cloud and platform engineering skill library.",
+  "license": "MIT",
+  "scripts": {
+    "lint:check": "markdownlint-cli2",
+    "lint:fix": "markdownlint-cli2 --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npm run lint:check && npm run format:check",
+    "fix": "npm run lint:fix && npm run format"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "0.23.2",
+    "prettier": "3.9.6"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

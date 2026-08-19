@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "scripting-and-automation",
+  "version": "1.0.0",
+  "must_cover": [
+    "set -euo pipefail",
+    "flock",
+    "trap",
+    "idempotent"
+  ],
+  "cases": [
+    {
+      "id": "scripting-and-automation-t1",
+      "prompt": "This cleanup script silently deletes the wrong directory when a variable is empty \u2014 how do I make it safe?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses set -euo pipefail and quotes expansions to prevent empty-variable and word-splitting disasters",
+        "Guards single execution with a lockfile (flock or equivalent) and cleans up with a trap",
+        "Makes the script idempotent and safe to re-run"
+      ]
+    },
+    {
+      "id": "scripting-and-automation-t2",
+      "prompt": "Two copies of our nightly cron job ran at once and duplicated records. How do I prevent overlap?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses set -euo pipefail and quotes expansions to prevent empty-variable and word-splitting disasters",
+        "Guards single execution with a lockfile (flock or equivalent) and cleans up with a trap",
+        "Makes the script idempotent and safe to re-run"
+      ]
+    },
+    {
+      "id": "scripting-and-automation-t3",
+      "prompt": "Review this bash deployment script for production readiness.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses set -euo pipefail and quotes expansions to prevent empty-variable and word-splitting disasters",
+        "Guards single execution with a lockfile (flock or equivalent) and cleans up with a trap",
+        "Makes the script idempotent and safe to re-run"
+      ]
+    },
+    {
+      "id": "scripting-and-automation-n1",
+      "prompt": "Write an Ansible playbook to configure 50 web servers",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "scripting-and-automation-n2",
+      "prompt": "How do I structure Terraform modules for multiple environments?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

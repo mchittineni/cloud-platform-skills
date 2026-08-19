@@ -1,0 +1,64 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "finops-framework-inform-optimize-operate",
+  "version": "1.0.0",
+  "must_cover": [
+    "Inform",
+    "Optimize",
+    "Operate",
+    "tag",
+    "Kubecost",
+    "Savings Plan",
+    "unit econom",
+    "showback"
+  ],
+  "cases": [
+    {
+      "id": "finops-framework-inform-optimize-operate-t1",
+      "prompt": "Our AWS bill jumped 40% last month and nobody knows why. Where do I start?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Follows the Inform \u2192 Optimize \u2192 Operate lifecycle instead of one-off cost cutting",
+        "Establishes mandatory allocation tags enforced in IaC, plus Kubecost/OpenCost for shared-cluster attribution",
+        "Models commitment coverage against measured steady-state usage before purchase, and defines unit economics"
+      ]
+    },
+    {
+      "id": "finops-framework-inform-optimize-operate-t2",
+      "prompt": "How do we charge cloud cost back to each product team when everything shares one cluster?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Follows the Inform \u2192 Optimize \u2192 Operate lifecycle instead of one-off cost cutting",
+        "Establishes mandatory allocation tags enforced in IaC, plus Kubecost/OpenCost for shared-cluster attribution",
+        "Models commitment coverage against measured steady-state usage before purchase, and defines unit economics"
+      ]
+    },
+    {
+      "id": "finops-framework-inform-optimize-operate-t3",
+      "prompt": "Should we buy Savings Plans or Reserved Instances for this workload?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Follows the Inform \u2192 Optimize \u2192 Operate lifecycle instead of one-off cost cutting",
+        "Establishes mandatory allocation tags enforced in IaC, plus Kubecost/OpenCost for shared-cluster attribution",
+        "Models commitment coverage against measured steady-state usage before purchase, and defines unit economics"
+      ]
+    },
+    {
+      "id": "finops-framework-inform-optimize-operate-n1",
+      "prompt": "Design the autoscaling and HA architecture for the service",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "finops-framework-inform-optimize-operate-n2",
+      "prompt": "Audit our accounts for security misconfiguration",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+name: Gate or tooling issue
+description: A problem with the validation, eval, compliance, sync, docs, or workflow-audit gates
+title: "tooling: <script> — <short summary>"
+labels: [tooling]
+body:
+  - type: dropdown
+    id: script
+    attributes:
+      label: Script
+      options:
+        - scripts/validate-skills.py
+        - scripts/run-evals.py
+        - scripts/compliance-check.py
+        - scripts/audit-workflows.py
+        - scripts/sync-all.py
+        - scripts/generate-docs.py
+        - scripts/check-release.py
+        - CI workflow
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command and output
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - False positive — gate fails something that is correct
+        - False negative — gate passes something that is wrong
+        - Crash or error
+        - Unclear message
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.13.1"
+    validations:
+      required: true

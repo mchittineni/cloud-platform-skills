@@ -1,0 +1,64 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "detection-engineering-threat-hunting",
+  "version": "1.0.0",
+  "must_cover": [
+    "Sigma",
+    "detection as code",
+    "ATT&CK",
+    "precision",
+    "falsepositives",
+    "Atomic Red Team",
+    "detection latency",
+    "Hypothesis"
+  ],
+  "cases": [
+    {
+      "id": "detection-engineering-threat-hunting-t1",
+      "prompt": "Our security alerts are so noisy the team closes them without reading. How do we fix the detections?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Measures precision per rule and routes by precision band rather than paging on everything",
+        "Tunes with identity and behavioural context instead of raising count thresholds, which hides slow attackers",
+        "Retires or fixes rules with no fires and documents false positives inside the rule"
+      ]
+    },
+    {
+      "id": "detection-engineering-threat-hunting-t2",
+      "prompt": "Which detections should we write first, and how do we know our MITRE ATT&CK coverage is real?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Maps required telemetry per attacker behaviour before writing rules, naming the common collection gaps",
+        "Scores each technique none / logged-only / detected / detected-and-tested rather than claiming a heat map",
+        "Validates with Atomic Red Team execution and measures detection latency as the floor on dwell time"
+      ]
+    },
+    {
+      "id": "detection-engineering-threat-hunting-t3",
+      "prompt": "Write our detection content as code in Sigma with tests in CI, and set up a hunt for a stolen CI token.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Stores vendor-neutral Sigma rules in Git and compiles them per backend, failing CI on schema drift",
+        "Gives every tuning filter an owner, a reason and a review date",
+        "Frames the hunt as a time-boxed hypothesis whose deliverable is a saved query or a new detection"
+      ]
+    },
+    {
+      "id": "detection-engineering-threat-hunting-n1",
+      "prompt": "A leaked AWS access key was already used by an attacker — contain it and preserve evidence.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "detection-engineering-threat-hunting-n2",
+      "prompt": "Instrument our services with OpenTelemetry so a latency spike leads to the exact trace.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

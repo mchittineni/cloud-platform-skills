@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "enterprise-iac-governance-terragrunt",
+  "version": "1.0.0",
+  "must_cover": [
+    "_envcommon",
+    "generate",
+    "conftest",
+    "deny",
+    "blast"
+  ],
+  "cases": [
+    {
+      "id": "enterprise-iac-governance-terragrunt-t1",
+      "prompt": "Our Terraform is copy-pasted across 40 accounts. How do we make it DRY and enforce standards?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Terragrunt include/_envcommon and generate blocks to remove duplication",
+        "Enforces policy with OPA/Conftest against the plan JSON before apply",
+        "Sizes state files per account/region/component to limit blast radius"
+      ]
+    },
+    {
+      "id": "enterprise-iac-governance-terragrunt-t2",
+      "prompt": "I need every S3 bucket to be encrypted and tagged, blocked in CI before apply.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Terragrunt include/_envcommon and generate blocks to remove duplication",
+        "Enforces policy with OPA/Conftest against the plan JSON before apply",
+        "Sizes state files per account/region/component to limit blast radius"
+      ]
+    },
+    {
+      "id": "enterprise-iac-governance-terragrunt-t3",
+      "prompt": "How do I wire dependencies between separate Terraform stacks across accounts?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Terragrunt include/_envcommon and generate blocks to remove duplication",
+        "Enforces policy with OPA/Conftest against the plan JSON before apply",
+        "Sizes state files per account/region/component to limit blast radius"
+      ]
+    },
+    {
+      "id": "enterprise-iac-governance-terragrunt-n1",
+      "prompt": "How do I set up remote state for a single small project?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "enterprise-iac-governance-terragrunt-n2",
+      "prompt": "Audit our AWS accounts against the CIS benchmark",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

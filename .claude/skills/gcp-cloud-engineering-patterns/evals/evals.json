@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "gcp-cloud-engineering-patterns",
+  "version": "1.0.0",
+  "must_cover": [
+    "folder",
+    "Organization Polic",
+    "Workload Identity Federation",
+    "VPC Service Controls",
+    "Shared VPC"
+  ],
+  "cases": [
+    {
+      "id": "gcp-cloud-engineering-patterns-t1",
+      "prompt": "Set up our GCP organization hierarchy with folders, projects and org policy constraints.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines the org/folder/project hierarchy with Organization Policy constraints as preventive guardrails",
+        "Uses Workload Identity Federation for keyless external access instead of exported SA keys",
+        "Applies VPC Service Controls perimeters and Shared VPC for the data perimeter"
+      ]
+    },
+    {
+      "id": "gcp-cloud-engineering-patterns-t2",
+      "prompt": "Our GitHub Actions needs to deploy to GCP without a service account key. How?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines the org/folder/project hierarchy with Organization Policy constraints as preventive guardrails",
+        "Uses Workload Identity Federation for keyless external access instead of exported SA keys",
+        "Applies VPC Service Controls perimeters and Shared VPC for the data perimeter"
+      ]
+    },
+    {
+      "id": "gcp-cloud-engineering-patterns-t3",
+      "prompt": "How do I stop data being exfiltrated from our BigQuery datasets?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Defines the org/folder/project hierarchy with Organization Policy constraints as preventive guardrails",
+        "Uses Workload Identity Federation for keyless external access instead of exported SA keys",
+        "Applies VPC Service Controls perimeters and Shared VPC for the data perimeter"
+      ]
+    },
+    {
+      "id": "gcp-cloud-engineering-patterns-n1",
+      "prompt": "Design a multi-tenant GKE Autopilot platform for our teams",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "gcp-cloud-engineering-patterns-n2",
+      "prompt": "Attribute Kubernetes spend back to each team",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "cloud-native-microservices-patterns",
+  "version": "1.0.0",
+  "must_cover": [
+    "SIGTERM",
+    "terminationGracePeriodSeconds",
+    "drain",
+    "startupProbe",
+    "correlation",
+    "12-factor"
+  ],
+  "cases": [
+    {
+      "id": "cloud-native-microservices-patterns-t1",
+      "prompt": "Our pods get killed during deploys and drop in-flight requests. How do we shut down gracefully?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Implements graceful shutdown: SIGTERM handling, readiness flip, connection draining, terminationGracePeriodSeconds",
+        "Separates startup from liveness and readiness probes with correct thresholds",
+        "Externalizes config/state and emits structured logs with correlation IDs (12-factor)"
+      ]
+    },
+    {
+      "id": "cloud-native-microservices-patterns-t2",
+      "prompt": "Review this service for 12-factor compliance before we move it to Kubernetes.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Implements graceful shutdown: SIGTERM handling, readiness flip, connection draining, terminationGracePeriodSeconds",
+        "Separates startup from liveness and readiness probes with correct thresholds",
+        "Externalizes config/state and emits structured logs with correlation IDs (12-factor)"
+      ]
+    },
+    {
+      "id": "cloud-native-microservices-patterns-t3",
+      "prompt": "Kubernetes keeps restarting our container during slow startup. What's wrong with our probes?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Implements graceful shutdown: SIGTERM handling, readiness flip, connection draining, terminationGracePeriodSeconds",
+        "Separates startup from liveness and readiness probes with correct thresholds",
+        "Externalizes config/state and emits structured logs with correlation IDs (12-factor)"
+      ]
+    },
+    {
+      "id": "cloud-native-microservices-patterns-n1",
+      "prompt": "Write the Helm chart and manifests for it",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "cloud-native-microservices-patterns-n2",
+      "prompt": "Configure mTLS and authorization between our services",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

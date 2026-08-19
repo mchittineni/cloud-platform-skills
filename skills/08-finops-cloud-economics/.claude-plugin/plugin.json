@@ -1,0 +1,10 @@
+{
+  "name": "08-finops-cloud-economics",
+  "description": "FinOps & Cloud Economics: 1 production-grade skills (finops-framework-inform-optimize-operate)",
+  "version": "1.0.0",
+  "author": "mchittineni",
+  "homepage": "https://github.com/mchittineni/cloud-platform-skills",
+  "repository": "https://github.com/mchittineni/cloud-platform-skills",
+  "license": "MIT",
+  "skills": "./"
+}

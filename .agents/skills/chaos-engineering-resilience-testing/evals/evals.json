@@ -1,0 +1,65 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "chaos-engineering-resilience-testing",
+  "version": "1.0.0",
+  "must_cover": [
+    "steady state",
+    "hypothesis",
+    "blast radius",
+    "abort criteria",
+    "AWS FIS",
+    "stopConditions",
+    "Chaos Mesh",
+    "NetworkChaos",
+    "GameDay"
+  ],
+  "cases": [
+    {
+      "id": "chaos-engineering-resilience-testing-t1",
+      "prompt": "We claim the service survives losing an availability zone but have never tested it. How do we prove it safely?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Writes a steady-state hypothesis measured against existing SLIs before injecting anything",
+        "Bounds the blast radius by environment, scope, traffic share and duration, staging before production",
+        "Defines abort criteria and an automated rollback that does not depend on the component being broken"
+      ]
+    },
+    {
+      "id": "chaos-engineering-resilience-testing-t2",
+      "prompt": "Plan a GameDay for the payments team and tell me what faults are actually worth injecting.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Runs a timeline from hypothesis to dry run to injection with a scribe recording timestamps",
+        "Prioritises dependency latency injection over pod termination because it exercises timeouts and retries",
+        "Treats the gap between injection and first alert as the key measurement and files findings as tickets"
+      ]
+    },
+    {
+      "id": "chaos-engineering-resilience-testing-t3",
+      "prompt": "Set up fault injection with AWS FIS and Chaos Mesh, scoped so it cannot take down more than the target service.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses an FIS experiment template with stopConditions bound to a CloudWatch burn-rate alarm",
+        "Scopes the injection role by resource tag rather than granting broad IAM",
+        "Always sets a duration on injected faults so the cluster self-heals if the operator dies"
+      ]
+    },
+    {
+      "id": "chaos-engineering-resilience-testing-n1",
+      "prompt": "Our nightly Postgres backup needs a tested restore procedure and an RPO target.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "chaos-engineering-resilience-testing-n2",
+      "prompt": "Write a k6 script to find the throughput ceiling of our checkout API before Black Friday.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

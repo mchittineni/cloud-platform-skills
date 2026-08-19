@@ -1,0 +1,106 @@
+name: release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Validate the release without publishing"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Verify release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+
+      - name: Resolve version
+        id: version
+        env:
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          version="${REF_NAME#v}"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Releasing ${version}"
+
+      - name: Version consistency (tag == plugin.json == CHANGELOG)
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: python3 scripts/check-release.py --version "$VERSION"
+
+      - name: All quality gates
+        run: |
+          python3 scripts/validate-skills.py --check-sync --strict
+          python3 scripts/run-evals.py --min-pass-rate 95 --out benchmark.json
+          python3 scripts/compliance-check.py --out compliance.json
+          python3 scripts/audit-workflows.py --out workflow-audit.json
+          python3 scripts/sync-all.py --check
+          python3 scripts/generate-docs.py --check
+
+      - name: Build skill manifest (release inventory)
+        run: python3 scripts/check-release.py --manifest skills-manifest.json
+
+      - name: Upload release evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-evidence-${{ steps.version.outputs.version }}
+          path: |
+            benchmark.json
+            compliance.json
+            workflow-audit.json
+            skills-manifest.json
+          retention-days: 90
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub release
+    needs: verify
+    if: startsWith(github.ref, 'refs/tags/v') && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Extract release notes from CHANGELOG
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: python3 scripts/check-release.py --notes "$VERSION" --out release-notes.md
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes-file release-notes.md \
+            --verify-tag

@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "zero-downtime-release-strategies",
+  "version": "1.0.0",
+  "must_cover": [
+    "AnalysisTemplate",
+    "canary",
+    "blue-green",
+    "rollback",
+    "setWeight"
+  ],
+  "cases": [
+    {
+      "id": "zero-downtime-release-strategies-t1",
+      "prompt": "I want to release to 5% of traffic, watch error rate, and roll back automatically if it degrades.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses metric-driven analysis (Argo Rollouts AnalysisTemplate or Flagger) to abort automatically",
+        "Chooses the strategy against real constraints (schema compatibility, session state, cost of double capacity)",
+        "Defines traffic-shifting steps and an explicit rollback trigger"
+      ]
+    },
+    {
+      "id": "zero-downtime-release-strategies-t2",
+      "prompt": "Blue-green or canary for a service with a shared database and long-lived connections?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses metric-driven analysis (Argo Rollouts AnalysisTemplate or Flagger) to abort automatically",
+        "Chooses the strategy against real constraints (schema compatibility, session state, cost of double capacity)",
+        "Defines traffic-shifting steps and an explicit rollback trigger"
+      ]
+    },
+    {
+      "id": "zero-downtime-release-strategies-t3",
+      "prompt": "Configure Argo Rollouts with a Prometheus analysis template.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses metric-driven analysis (Argo Rollouts AnalysisTemplate or Flagger) to abort automatically",
+        "Chooses the strategy against real constraints (schema compatibility, session state, cost of double capacity)",
+        "Defines traffic-shifting steps and an explicit rollback trigger"
+      ]
+    },
+    {
+      "id": "zero-downtime-release-strategies-n1",
+      "prompt": "How do I package this app as a Helm chart?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "zero-downtime-release-strategies-n2",
+      "prompt": "Set up mTLS between all services in the mesh",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
