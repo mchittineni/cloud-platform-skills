@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "api-gateway-service-mesh",
+  "version": "1.0.0",
+  "must_cover": [
+    "PeerAuthentication",
+    "STRICT",
+    "AuthorizationPolicy",
+    "VirtualService",
+    "DestinationRule",
+    "outlier",
+    "timeout"
+  ],
+  "cases": [
+    {
+      "id": "api-gateway-service-mesh-t1",
+      "prompt": "Enforce mTLS between all services and deny traffic that isn't explicitly allowed.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Sets PeerAuthentication to STRICT plus AuthorizationPolicy with a default-deny posture",
+        "Debugs mesh failures with the right signals (envoy config dump/stats, outlier detection, timeouts)",
+        "Configures VirtualService/DestinationRule weights, retries and timeouts explicitly"
+      ]
+    },
+    {
+      "id": "api-gateway-service-mesh-t2",
+      "prompt": "Requests inside the mesh are failing with 503 UC and I can't tell why.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Sets PeerAuthentication to STRICT plus AuthorizationPolicy with a default-deny posture",
+        "Debugs mesh failures with the right signals (envoy config dump/stats, outlier detection, timeouts)",
+        "Configures VirtualService/DestinationRule weights, retries and timeouts explicitly"
+      ]
+    },
+    {
+      "id": "api-gateway-service-mesh-t3",
+      "prompt": "Shift 20% of traffic to v2 with an Istio VirtualService.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Sets PeerAuthentication to STRICT plus AuthorizationPolicy with a default-deny posture",
+        "Debugs mesh failures with the right signals (envoy config dump/stats, outlier detection, timeouts)",
+        "Configures VirtualService/DestinationRule weights, retries and timeouts explicitly"
+      ]
+    },
+    {
+      "id": "api-gateway-service-mesh-n1",
+      "prompt": "Set up Argo Rollouts to automate the canary analysis",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "api-gateway-service-mesh-n2",
+      "prompt": "How do I make the application itself retry safely with backoff?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

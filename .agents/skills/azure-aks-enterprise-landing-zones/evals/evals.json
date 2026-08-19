@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "azure-aks-enterprise-landing-zones",
+  "version": "1.0.0",
+  "must_cover": [
+    "CNI Overlay",
+    "Workload Identity",
+    "Azure Policy",
+    "private",
+    "node pool"
+  ],
+  "cases": [
+    {
+      "id": "azure-aks-enterprise-landing-zones-t1",
+      "prompt": "Build a private AKS cluster that meets our enterprise governance requirements.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Azure CNI Overlay (or justified alternative) with deliberate IP planning and a private API server",
+        "Configures Workload Identity federation instead of secrets or pod-managed identity",
+        "Enforces guardrails with Azure Policy for Kubernetes and separates system/user node pools"
+      ]
+    },
+    {
+      "id": "azure-aks-enterprise-landing-zones-t2",
+      "prompt": "How do AKS pods authenticate to Key Vault without storing secrets?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Azure CNI Overlay (or justified alternative) with deliberate IP planning and a private API server",
+        "Configures Workload Identity federation instead of secrets or pod-managed identity",
+        "Enforces guardrails with Azure Policy for Kubernetes and separates system/user node pools"
+      ]
+    },
+    {
+      "id": "azure-aks-enterprise-landing-zones-t3",
+      "prompt": "Enforce that no one can deploy privileged containers in our AKS clusters.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Uses Azure CNI Overlay (or justified alternative) with deliberate IP planning and a private API server",
+        "Configures Workload Identity federation instead of secrets or pod-managed identity",
+        "Enforces guardrails with Azure Policy for Kubernetes and separates system/user node pools"
+      ]
+    },
+    {
+      "id": "azure-aks-enterprise-landing-zones-n1",
+      "prompt": "Design the hub-and-spoke network and Private Endpoints for our subscriptions",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "azure-aks-enterprise-landing-zones-n2",
+      "prompt": "How do we canary a release with automatic rollback?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

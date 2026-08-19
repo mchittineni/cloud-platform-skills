@@ -1,0 +1,75 @@
+---
+name: aws-eks-enterprise-patterns
+description: "Enterprise AWS EKS architecture: VPC CNI prefix delegation and IP planning, Karpenter NodePool/EC2NodeClass autoscaling, IRSA and EKS Pod Identity, add-on lifecycle, and upgrade strategy. Use when designing, scaling, hardening, or upgrading an EKS cluster, or fixing pod IP exhaustion and node-scaling problems."
+level: senior
+tags: [aws, eks, karpenter, irsa, kubernetes, cloud]
+compatible_runtimes: [antigravity, claude, codex, cursor]
+---
+
+# Enterprise AWS EKS Architecture & Karpenter Node Autoscaling
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- An EKS cluster needs node autoscaling, IP planning, or add-on decisions
+- Pods need AWS API access via IRSA or Pod Identity instead of node roles
+- Cluster or node-group upgrades must be planned safely
+
+**Route elsewhere when:**
+
+- Account-level guardrails and SCPs -> `aws-iam-zero-trust-policies`
+- Workload packaging -> `helm-kubernetes-deployment`
+- Node cost optimization -> `finops-framework-inform-optimize-operate`
+
+## 1. Karpenter NodePool & EC2NodeClass Specification
+
+```yaml
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: general-compute
+spec:
+  template:
+    spec:
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "r"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["5"]
+      nodeClassRef:
+        name: default-ec2-class
+  limits:
+    cpu: "500"
+    memory: 1000Gi
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 720h # 30 days node recycling
+---
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: default-ec2-class
+spec:
+  amiFamily: AL2023
+  role: "KarpenterNodeRole-Production"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "production-eks-cluster"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "production-eks-cluster"
+```
+
+---
+
+## 2. EKS Production Hardening Guidelines
+
+- **EKS Pod Identity / IRSA**: Never attach IAM policies directly to EC2 Worker Node IAM roles; use IAM Roles for Service Accounts (IRSA) or AWS EKS Pod Identity.
+- **VPC CNI Prefix Delegation**: Enable `ENABLE_PREFIX_DELEGATION=true` to allow large pod densities per node without exhausting VPC subnets.
+- **Control Plane Logging**: Send API, Audit, and Authenticator logs to Amazon CloudWatch with 30-day retention policies.

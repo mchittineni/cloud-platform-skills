@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "incident-management-and-postmortem",
+  "version": "1.0.0",
+  "must_cover": [
+    "Incident Commander",
+    "Scribe",
+    "severity",
+    "blameless",
+    "action item"
+  ],
+  "cases": [
+    {
+      "id": "incident-management-and-postmortem-t1",
+      "prompt": "We're 20 minutes into a major outage with eight people in a call and no one is leading. What now?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Assigns ICS roles explicitly (Incident Commander, Ops, Comms, Scribe) and separates command from hands-on work",
+        "Defines severity by customer impact with matching comms cadence",
+        "Produces a blameless post-mortem with a timeline and owned, tracked action items"
+      ]
+    },
+    {
+      "id": "incident-management-and-postmortem-t2",
+      "prompt": "Define a severity matrix and escalation policy for our on-call.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Assigns ICS roles explicitly (Incident Commander, Ops, Comms, Scribe) and separates command from hands-on work",
+        "Defines severity by customer impact with matching comms cadence",
+        "Produces a blameless post-mortem with a timeline and owned, tracked action items"
+      ]
+    },
+    {
+      "id": "incident-management-and-postmortem-t3",
+      "prompt": "Write the post-mortem for yesterday's 90-minute payment outage.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Assigns ICS roles explicitly (Incident Commander, Ops, Comms, Scribe) and separates command from hands-on work",
+        "Defines severity by customer impact with matching comms cadence",
+        "Produces a blameless post-mortem with a timeline and owned, tracked action items"
+      ]
+    },
+    {
+      "id": "incident-management-and-postmortem-n1",
+      "prompt": "We believe an attacker has access to a production host",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "incident-management-and-postmortem-n2",
+      "prompt": "How do I fail over to our DR region?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

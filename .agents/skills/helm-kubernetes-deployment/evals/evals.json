@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "helm-kubernetes-deployment",
+  "version": "1.0.0",
+  "must_cover": [
+    "readinessProbe",
+    "livenessProbe",
+    "startupProbe",
+    "securityContext",
+    "PodDisruptionBudget",
+    "helm rollback"
+  ],
+  "cases": [
+    {
+      "id": "helm-kubernetes-deployment-t1",
+      "prompt": "Write a Helm chart for our API with proper probes, resource limits, and a PodDisruptionBudget.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Sets liveness, readiness and startup probes distinctly rather than reusing one endpoint",
+        "Includes securityContext (non-root, dropped capabilities) and resource requests/limits",
+        "Uses values.schema.json or equivalent validation, and shows rollback via helm history/rollback"
+      ]
+    },
+    {
+      "id": "helm-kubernetes-deployment-t2",
+      "prompt": "helm upgrade has been stuck in pending-upgrade for 20 minutes \u2014 how do I recover?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Sets liveness, readiness and startup probes distinctly rather than reusing one endpoint",
+        "Includes securityContext (non-root, dropped capabilities) and resource requests/limits",
+        "Uses values.schema.json or equivalent validation, and shows rollback via helm history/rollback"
+      ]
+    },
+    {
+      "id": "helm-kubernetes-deployment-t3",
+      "prompt": "How do I validate that someone can't pass a bad value into our chart?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Sets liveness, readiness and startup probes distinctly rather than reusing one endpoint",
+        "Includes securityContext (non-root, dropped capabilities) and resource requests/limits",
+        "Uses values.schema.json or equivalent validation, and shows rollback via helm history/rollback"
+      ]
+    },
+    {
+      "id": "helm-kubernetes-deployment-n1",
+      "prompt": "Design node autoscaling with Karpenter on EKS",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "helm-kubernetes-deployment-n2",
+      "prompt": "How do I shift 10% of traffic to a new version and roll back automatically?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
