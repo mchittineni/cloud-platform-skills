@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "git-branching-merge-strategies",
+  "version": "1.0.0",
+  "must_cover": [
+    "trunk",
+    "rebase",
+    "git revert",
+    "conflict"
+  ],
+  "cases": [
+    {
+      "id": "git-branching-merge-strategies-t1",
+      "prompt": "We deploy about 10 times a day with 6 engineers \u2014 should we use GitFlow or trunk-based?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Ties branching-model choice to deployment frequency instead of recommending GitFlow by default",
+        "Uses git revert (not force-push or reset) for a commit already pulled by others",
+        "States an explicit merge-vs-rebase rule for shared vs local branches"
+      ]
+    },
+    {
+      "id": "git-branching-merge-strategies-t2",
+      "prompt": "I pushed a broken commit to main an hour ago and other people have pulled it. How do I undo it safely?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Ties branching-model choice to deployment frequency instead of recommending GitFlow by default",
+        "Uses git revert (not force-push or reset) for a commit already pulled by others",
+        "States an explicit merge-vs-rebase rule for shared vs local branches"
+      ]
+    },
+    {
+      "id": "git-branching-merge-strategies-t3",
+      "prompt": "Half the team rebases and half merges, and history is a mess. What policy should we set?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Ties branching-model choice to deployment frequency instead of recommending GitFlow by default",
+        "Uses git revert (not force-push or reset) for a commit already pulled by others",
+        "States an explicit merge-vs-rebase rule for shared vs local branches"
+      ]
+    },
+    {
+      "id": "git-branching-merge-strategies-n1",
+      "prompt": "Design an ArgoCD ApplicationSet to sync 12 clusters from one repo",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "git-branching-merge-strategies-n2",
+      "prompt": "Our GitHub Actions pipeline takes 25 minutes, how do I speed it up?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

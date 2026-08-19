@@ -1,0 +1,10 @@
+{
+  "name": "02-devsecops-and-secops",
+  "description": "DevSecOps & SecOps: 5 production-grade skills (cloud-security-posture-cspm-cis, container-runtime-security-falco, secops-incident-triage-forensics...)",
+  "version": "1.0.0",
+  "author": "mchittineni",
+  "homepage": "https://github.com/mchittineni/cloud-platform-skills",
+  "repository": "https://github.com/mchittineni/cloud-platform-skills",
+  "license": "MIT",
+  "skills": "./"
+}

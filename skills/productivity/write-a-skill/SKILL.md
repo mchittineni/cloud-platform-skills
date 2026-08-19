@@ -1,0 +1,86 @@
+---
+name: write-a-skill
+description: "Agent-skill authoring meta-skill: strict SKILL.md structure, progressive disclosure, description triggers, bundled scripts and references, and a 3-phase Gather/Draft/Review workflow with validation gates. Use when creating, refactoring, auditing, or reviewing an AI agent skill in this repository or any skills library."
+level: staff
+tags: [meta-skill, skill-authoring, progressive-disclosure, standards, productivity]
+compatible_runtimes: [antigravity, claude, codex, cursor]
+---
+
+# Write A Skill: Progressive Disclosure & Agent Skill Authoring
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- A new skill is being created and must pass structure and description gates
+- An existing skill is bloated, untriggered, or inconsistently structured
+- You are reviewing a skill contribution before merge
+
+**Route elsewhere when:**
+
+- Repository-wide validation, eval, compliance and mirror-sync gates -> the repository-root `scripts/` directory
+- Contribution conventions -> `CONTRIBUTING.md`
+
+## Attribution
+
+Derived from [Matt Pocock's write-a-skill](https://github.com/mattpocock/skills/tree/main/skills/productivity/write-a-skill) (MIT-licensed).
+
+---
+
+## 1. Non-Negotiable Skill Design Laws
+
+1. **The Description is King**: The `description` field in the frontmatter is the **only** piece of information the model reads when deciding whether to activate the skill. It MUST be written in the third person and specify explicit triggers starting with **"Use when..."**.
+2. **The 100-Line Ceiling**: Keep the main `SKILL.md` concise (< 100-150 lines). Avoid overwhelming context windows. Offload deep dive runbooks, deep schemas, and multi-page catalogs into `references/` or `scripts/`.
+3. **Progressive Disclosure**: Only the frontmatter is in the initial system prompt. The model reads `SKILL.md` on-demand, and reads files under `references/` only when resolving deep edge cases.
+
+---
+
+## 2. The 3-Phase Skill Authoring Workflow
+
+### Phase 1: Gather
+
+- Define the exact scope and operational boundaries of the skill.
+- Collect production-tested configurations, manifests, commands, and failure modes.
+- Identify the exact keywords and scenario triggers ("Use when...").
+
+### Phase 2: Draft
+
+- Scaffold directory structure:
+
+  ```text
+  skills/<category>/<skill-name>/
+  ├── SKILL.md                # Entry point with YAML frontmatter (<100-150 lines)
+  ├── scripts/                # Standalone helper CLI scripts or validators
+  └── references/             # Deep references, architecture notes, cheat sheets
+  ```
+
+- Write concise, actionable sections:
+  1. Quick Reference / Decision Matrix
+  2. Production Configurations / Commands
+  3. Anti-Patterns & Safety Checks
+
+### Phase 3: Review Checklist (Matt Pocock's 6 Gates)
+
+- [ ] **Description Gate**: ≤ 1024 chars, third person, contains explicit `"Use when..."` triggers.
+- [ ] **Length Gate**: Main `SKILL.md` is tight, actionable, and delegates deep references.
+- [ ] **Executable Code Gate**: Code snippets are copy-pasteable without placeholders like `TODO` or `<fill_in>`.
+- [ ] **Anti-Pattern Gate**: Explicitly lists "Don'ts" and failure modes.
+- [ ] **Portability Gate**: Interoperable across Antigravity, Claude Code, Cursor, and Codex.
+- [ ] **Validation Gate**: Passes `validate-skills.py` and `skill_review_checklist_runner.py`.
+
+---
+
+## 3. Bundled Validation Tools
+
+Run the validation suite locally:
+
+```bash
+# Run review checklist runner on a skill
+python3 skills/productivity/write-a-skill/scripts/skill_review_checklist_runner.py skills/01-devops-core/mid-level-automation/terraform-iac-modules/SKILL.md
+
+# Validate description trigger compliance
+python3 skills/productivity/write-a-skill/scripts/skill_description_validator.py skills/01-devops-core/mid-level-automation/terraform-iac-modules/SKILL.md
+
+# Validate folder structure
+python3 skills/productivity/write-a-skill/scripts/skill_structure_validator.py skills/01-devops-core/mid-level-automation/terraform-iac-modules/
+```

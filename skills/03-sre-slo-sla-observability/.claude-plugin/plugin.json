@@ -1,0 +1,10 @@
+{
+  "name": "03-sre-slo-sla-observability",
+  "description": "SRE, SLO/SLA & Observability: 4 production-grade skills (incident-management-and-postmortem, infrastructure-host-monitoring, prometheus-grafana-otel-tracing...)",
+  "version": "1.0.0",
+  "author": "mchittineni",
+  "homepage": "https://github.com/mchittineni/cloud-platform-skills",
+  "repository": "https://github.com/mchittineni/cloud-platform-skills",
+  "license": "MIT",
+  "skills": "./"
+}

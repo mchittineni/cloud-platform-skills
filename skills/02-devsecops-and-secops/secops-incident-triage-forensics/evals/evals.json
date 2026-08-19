@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "secops-incident-triage-forensics",
+  "version": "1.0.0",
+  "must_cover": [
+    "quarantine",
+    "snapshot",
+    "chain of custody",
+    "revoke",
+    "memory"
+  ],
+  "cases": [
+    {
+      "id": "secops-incident-triage-forensics-t1",
+      "prompt": "We think an EC2 instance is compromised and mining crypto. What do we do right now?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Contains before eradicating: isolate with a quarantine security group, snapshot for evidence, then revoke sessions",
+        "Preserves evidence (disk snapshot, memory capture) with chain of custody before remediation destroys it",
+        "Revokes IAM sessions/keys and scopes attacker activity through log correlation"
+      ]
+    },
+    {
+      "id": "secops-incident-triage-forensics-t2",
+      "prompt": "An AWS access key was found in a public repo and has been used. Walk me through response.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Contains before eradicating: isolate with a quarantine security group, snapshot for evidence, then revoke sessions",
+        "Preserves evidence (disk snapshot, memory capture) with chain of custody before remediation destroys it",
+        "Revokes IAM sessions/keys and scopes attacker activity through log correlation"
+      ]
+    },
+    {
+      "id": "secops-incident-triage-forensics-t3",
+      "prompt": "How do I capture forensic evidence from a container before killing it?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Contains before eradicating: isolate with a quarantine security group, snapshot for evidence, then revoke sessions",
+        "Preserves evidence (disk snapshot, memory capture) with chain of custody before remediation destroys it",
+        "Revokes IAM sessions/keys and scopes attacker activity through log correlation"
+      ]
+    },
+    {
+      "id": "secops-incident-triage-forensics-n1",
+      "prompt": "Our API is returning 500s and latency is high \u2014 coordinate the outage",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "secops-incident-triage-forensics-n2",
+      "prompt": "Set up Falco rules for runtime detection",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

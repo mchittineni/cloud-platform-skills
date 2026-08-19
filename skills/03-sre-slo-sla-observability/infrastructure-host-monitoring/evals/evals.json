@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "infrastructure-host-monitoring",
+  "version": "1.0.0",
+  "must_cover": [
+    "node_exporter",
+    "cAdvisor",
+    "predict_linear",
+    "iowait",
+    "for:"
+  ],
+  "cases": [
+    {
+      "id": "infrastructure-host-monitoring-t1",
+      "prompt": "Give me the essential Prometheus alert rules for our VM fleet.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Provides working PromQL for CPU saturation, memory pressure, I/O wait and disk-fill prediction (predict_linear)",
+        "Sets alert thresholds with for-durations that avoid flapping",
+        "Distinguishes node-level from container-level (cAdvisor) signals"
+      ]
+    },
+    {
+      "id": "infrastructure-host-monitoring-t2",
+      "prompt": "I want to be paged before a disk fills, not after. What's the right rule?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Provides working PromQL for CPU saturation, memory pressure, I/O wait and disk-fill prediction (predict_linear)",
+        "Sets alert thresholds with for-durations that avoid flapping",
+        "Distinguishes node-level from container-level (cAdvisor) signals"
+      ]
+    },
+    {
+      "id": "infrastructure-host-monitoring-t3",
+      "prompt": "Set up Node Exporter and cAdvisor dashboards for our nodes.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Provides working PromQL for CPU saturation, memory pressure, I/O wait and disk-fill prediction (predict_linear)",
+        "Sets alert thresholds with for-durations that avoid flapping",
+        "Distinguishes node-level from container-level (cAdvisor) signals"
+      ]
+    },
+    {
+      "id": "infrastructure-host-monitoring-n1",
+      "prompt": "Define an availability SLO for the payments service",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "infrastructure-host-monitoring-n2",
+      "prompt": "This one host is on fire right now \u2014 diagnose it live",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

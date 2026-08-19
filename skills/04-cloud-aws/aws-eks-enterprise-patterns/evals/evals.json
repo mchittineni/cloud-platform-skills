@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "aws-eks-enterprise-patterns",
+  "version": "1.0.0",
+  "must_cover": [
+    "prefix delegation",
+    "Karpenter",
+    "NodePool",
+    "EC2NodeClass",
+    "IRSA",
+    "Pod Identity",
+    "consolidat"
+  ],
+  "cases": [
+    {
+      "id": "aws-eks-enterprise-patterns-t1",
+      "prompt": "Our EKS pods are failing to schedule with no available IPs. How do we fix the VPC CNI setup?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Addresses IP exhaustion with prefix delegation / secondary CIDR and explicit subnet sizing",
+        "Configures Karpenter NodePool and EC2NodeClass with consolidation and instance-type diversity",
+        "Recommends IRSA or EKS Pod Identity over node instance-role credentials"
+      ]
+    },
+    {
+      "id": "aws-eks-enterprise-patterns-t2",
+      "prompt": "Set up Karpenter so we scale nodes efficiently with spot where possible.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Addresses IP exhaustion with prefix delegation / secondary CIDR and explicit subnet sizing",
+        "Configures Karpenter NodePool and EC2NodeClass with consolidation and instance-type diversity",
+        "Recommends IRSA or EKS Pod Identity over node instance-role credentials"
+      ]
+    },
+    {
+      "id": "aws-eks-enterprise-patterns-t3",
+      "prompt": "How should pods get AWS API access \u2014 IRSA or Pod Identity?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Addresses IP exhaustion with prefix delegation / secondary CIDR and explicit subnet sizing",
+        "Configures Karpenter NodePool and EC2NodeClass with consolidation and instance-type diversity",
+        "Recommends IRSA or EKS Pod Identity over node instance-role credentials"
+      ]
+    },
+    {
+      "id": "aws-eks-enterprise-patterns-n1",
+      "prompt": "Design SCPs and permission boundaries for the whole AWS Organization",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "aws-eks-enterprise-patterns-n2",
+      "prompt": "Write the Helm chart for this microservice",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

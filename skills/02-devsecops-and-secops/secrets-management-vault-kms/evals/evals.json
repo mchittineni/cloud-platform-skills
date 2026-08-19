@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "secrets-management-vault-kms",
+  "version": "1.0.0",
+  "must_cover": [
+    "ExternalSecret",
+    "Vault",
+    "workload identity",
+    "rotat",
+    "envelope encryption",
+    "revoke"
+  ],
+  "cases": [
+    {
+      "id": "secrets-management-vault-kms-t1",
+      "prompt": "Our database password is in a Kubernetes Secret committed to Git. What's the right way to do this?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Moves to dynamic or short-lived credentials rather than long-lived static secrets",
+        "Uses External Secrets Operator / CSI with workload identity so secrets never live in Git",
+        "Defines rotation and a leaked-credential revocation path"
+      ]
+    },
+    {
+      "id": "secrets-management-vault-kms-t2",
+      "prompt": "Set up External Secrets Operator against Vault with Kubernetes auth.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Moves to dynamic or short-lived credentials rather than long-lived static secrets",
+        "Uses External Secrets Operator / CSI with workload identity so secrets never live in Git",
+        "Defines rotation and a leaked-credential revocation path"
+      ]
+    },
+    {
+      "id": "secrets-management-vault-kms-t3",
+      "prompt": "How do we rotate credentials automatically instead of every 90 days by hand?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Moves to dynamic or short-lived credentials rather than long-lived static secrets",
+        "Uses External Secrets Operator / CSI with workload identity so secrets never live in Git",
+        "Defines rotation and a leaked-credential revocation path"
+      ]
+    },
+    {
+      "id": "secrets-management-vault-kms-n1",
+      "prompt": "Scan the repo for committed secrets in CI",
+      "should_trigger": false,
+      "files": [],
+      "assertions": [],
+      "known_residual": "Genuine near-tie with shift-left-security-sast-sca under bag-of-words routing: both skills legitimately own 'secrets' + 'CI' vocabulary. Resolved in practice by the Route elsewhere cross-link in both bodies. Left after 4 of 5 allowed iterations rather than keyword-stuffing the description to win one prompt."
+    },
+    {
+      "id": "secrets-management-vault-kms-n2",
+      "prompt": "Design SCPs to stop developers creating public S3 buckets",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

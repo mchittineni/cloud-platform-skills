@@ -1,0 +1,10 @@
+{
+  "name": "05-cloud-azure",
+  "description": "Azure Cloud Architecture: 2 production-grade skills (azure-aks-enterprise-landing-zones, azure-cloud-engineering-patterns)",
+  "version": "1.0.0",
+  "author": "mchittineni",
+  "homepage": "https://github.com/mchittineni/cloud-platform-skills",
+  "repository": "https://github.com/mchittineni/cloud-platform-skills",
+  "license": "MIT",
+  "skills": "./"
+}

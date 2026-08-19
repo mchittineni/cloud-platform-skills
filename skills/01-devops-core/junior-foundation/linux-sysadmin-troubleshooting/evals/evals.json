@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../../templates/eval-schema.json",
+  "skill": "linux-sysadmin-troubleshooting",
+  "version": "1.0.0",
+  "must_cover": [
+    "USE Method",
+    "strace",
+    "iostat",
+    "inode",
+    "oom"
+  ],
+  "cases": [
+    {
+      "id": "linux-sysadmin-troubleshooting-t1",
+      "prompt": "Our app server is at load average 40 with 8 cores and everything is crawling \u2014 where do I even start?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Applies the USE method (Utilization, Saturation, Errors) across CPU, memory, disk I/O and network rather than guessing",
+        "Names inode exhaustion (df -i) as the cause when free blocks exist but writes fail",
+        "Gives concrete commands (top/ps/strace/vmstat/iostat/ss/dig) tied to the specific symptom"
+      ]
+    },
+    {
+      "id": "linux-sysadmin-troubleshooting-t2",
+      "prompt": "df says the disk has space but writes are failing with 'No space left on device'. What's going on?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Applies the USE method (Utilization, Saturation, Errors) across CPU, memory, disk I/O and network rather than guessing",
+        "Names inode exhaustion (df -i) as the cause when free blocks exist but writes fail",
+        "Gives concrete commands (top/ps/strace/vmstat/iostat/ss/dig) tied to the specific symptom"
+      ]
+    },
+    {
+      "id": "linux-sysadmin-troubleshooting-t3",
+      "prompt": "A process is hung in D state and won't die. How do I find out what it's blocked on?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Applies the USE method (Utilization, Saturation, Errors) across CPU, memory, disk I/O and network rather than guessing",
+        "Names inode exhaustion (df -i) as the cause when free blocks exist but writes fail",
+        "Gives concrete commands (top/ps/strace/vmstat/iostat/ss/dig) tied to the specific symptom"
+      ]
+    },
+    {
+      "id": "linux-sysadmin-troubleshooting-n1",
+      "prompt": "Write me a Dockerfile for a Go service with a small final image",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "linux-sysadmin-troubleshooting-n2",
+      "prompt": "Set up Prometheus alert rules for node CPU saturation across the fleet",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "performance-load-testing",
+  "version": "1.0.0",
+  "must_cover": [
+    "p95",
+    "p99",
+    "threshold",
+    "soak",
+    "spike"
+  ],
+  "cases": [
+    {
+      "id": "performance-load-testing-t1",
+      "prompt": "Write a k6 script that ramps to 2000 VUs and fails the build if p95 goes above 500ms.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Reports p95/p99 percentiles rather than averages",
+        "Distinguishes load, stress, spike and soak profiles and picks the right one",
+        "Encodes pass/fail thresholds so the test gates a release"
+      ]
+    },
+    {
+      "id": "performance-load-testing-t2",
+      "prompt": "How do I tell whether our API can handle Black Friday traffic?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Reports p95/p99 percentiles rather than averages",
+        "Distinguishes load, stress, spike and soak profiles and picks the right one",
+        "Encodes pass/fail thresholds so the test gates a release"
+      ]
+    },
+    {
+      "id": "performance-load-testing-t3",
+      "prompt": "Latency looks fine at average but users complain \u2014 how do I measure this properly?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Reports p95/p99 percentiles rather than averages",
+        "Distinguishes load, stress, spike and soak profiles and picks the right one",
+        "Encodes pass/fail thresholds so the test gates a release"
+      ]
+    },
+    {
+      "id": "performance-load-testing-n1",
+      "prompt": "Define an SLO and error budget for our checkout service",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "performance-load-testing-n2",
+      "prompt": "Our node is at 100% CPU right now, how do I diagnose it?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

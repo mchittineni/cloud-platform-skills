@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "serverless-event-driven-architecture",
+  "version": "1.0.0",
+  "must_cover": [
+    "dead",
+    "redrive",
+    "idempoten",
+    "MessageGroupId",
+    "FIFO",
+    "concurrency"
+  ],
+  "cases": [
+    {
+      "id": "serverless-event-driven-architecture-t1",
+      "prompt": "Design an event-driven order pipeline on AWS with EventBridge, SQS and Lambda.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Wires DLQs (and redrive) plus retry policy at each hop so failures are captured, not lost",
+        "Makes handlers idempotent with a deduplication key because at-least-once delivery duplicates",
+        "Uses FIFO MessageGroupId for per-entity ordering and explains the throughput trade-off"
+      ]
+    },
+    {
+      "id": "serverless-event-driven-architecture-t2",
+      "prompt": "Events are disappearing when our Lambda throws. How do I stop losing them?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Wires DLQs (and redrive) plus retry policy at each hop so failures are captured, not lost",
+        "Makes handlers idempotent with a deduplication key because at-least-once delivery duplicates",
+        "Uses FIFO MessageGroupId for per-entity ordering and explains the throughput trade-off"
+      ]
+    },
+    {
+      "id": "serverless-event-driven-architecture-t3",
+      "prompt": "We need strict per-customer ordering but high throughput. FIFO or standard?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Wires DLQs (and redrive) plus retry policy at each hop so failures are captured, not lost",
+        "Makes handlers idempotent with a deduplication key because at-least-once delivery duplicates",
+        "Uses FIFO MessageGroupId for per-entity ordering and explains the throughput trade-off"
+      ]
+    },
+    {
+      "id": "serverless-event-driven-architecture-n1",
+      "prompt": "Design a long-running containerized service for Kubernetes",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "serverless-event-driven-architecture-n2",
+      "prompt": "Model what this workload will cost per month and buy commitments",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "write-a-skill",
+  "version": "1.0.0",
+  "must_cover": [
+    "third person",
+    "Use when",
+    "progressive disclosure",
+    "references/",
+    "validate"
+  ],
+  "cases": [
+    {
+      "id": "write-a-skill-t1",
+      "prompt": "I want to add a new skill to this library \u2014 what's the required structure and how do I make it trigger?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Requires a third-person description with explicit 'Use when' triggers as the activation contract",
+        "Applies progressive disclosure: keep SKILL.md lean and push depth into references/ and scripts/",
+        "Runs the validation gates (validate-skills.py, compliance-check.py, run-evals.py) before merge"
+      ]
+    },
+    {
+      "id": "write-a-skill-t2",
+      "prompt": "This skill is 600 lines and never activates. How do I fix it?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Requires a third-person description with explicit 'Use when' triggers as the activation contract",
+        "Applies progressive disclosure: keep SKILL.md lean and push depth into references/ and scripts/",
+        "Runs the validation gates (validate-skills.py, compliance-check.py, run-evals.py) before merge"
+      ]
+    },
+    {
+      "id": "write-a-skill-t3",
+      "prompt": "Review my new skill before I open the PR.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Requires a third-person description with explicit 'Use when' triggers as the activation contract",
+        "Applies progressive disclosure: keep SKILL.md lean and push depth into references/ and scripts/",
+        "Runs the validation gates (validate-skills.py, compliance-check.py, run-evals.py) before merge"
+      ]
+    },
+    {
+      "id": "write-a-skill-n1",
+      "prompt": "Audit our AWS accounts against CIS benchmarks",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "write-a-skill-n2",
+      "prompt": "Design a Backstage golden path template",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

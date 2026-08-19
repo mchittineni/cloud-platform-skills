@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "shift-left-security-sast-sca",
+  "version": "1.0.0",
+  "must_cover": [
+    "Semgrep",
+    "Trivy",
+    "gitleaks",
+    "SBOM",
+    "CycloneDX",
+    "false positive"
+  ],
+  "cases": [
+    {
+      "id": "shift-left-security-sast-sca-t1",
+      "prompt": "Add SAST, dependency scanning and secret detection to our GitHub Actions pipeline.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Wires Semgrep (SAST), Trivy/Snyk (SCA and image), and Gitleaks (secrets) with severity-based gates",
+        "Addresses noise explicitly: baselines, suppressions with owners, and blocking only on actionable severities",
+        "Generates an SBOM in CycloneDX or SPDX as a build artifact"
+      ]
+    },
+    {
+      "id": "shift-left-security-sast-sca-t2",
+      "prompt": "Our security scanner reports 400 findings and developers ignore it. How do I fix that?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Wires Semgrep (SAST), Trivy/Snyk (SCA and image), and Gitleaks (secrets) with severity-based gates",
+        "Addresses noise explicitly: baselines, suppressions with owners, and blocking only on actionable severities",
+        "Generates an SBOM in CycloneDX or SPDX as a build artifact"
+      ]
+    },
+    {
+      "id": "shift-left-security-sast-sca-t3",
+      "prompt": "A customer is asking for an SBOM. How do I produce one in CI?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Wires Semgrep (SAST), Trivy/Snyk (SCA and image), and Gitleaks (secrets) with severity-based gates",
+        "Addresses noise explicitly: baselines, suppressions with owners, and blocking only on actionable severities",
+        "Generates an SBOM in CycloneDX or SPDX as a build artifact"
+      ],
+      "known_residual": "SBOM prompt ties with serverless-event-driven-architecture on the shared token 'produce/CI'; the SBOM content itself is covered and gated by the must_cover anchors (SBOM, CycloneDX). Documented rather than gamed."
+    },
+    {
+      "id": "shift-left-security-sast-sca-n1",
+      "prompt": "Falco fired a runtime alert on a production pod \u2014 what now?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "shift-left-security-sast-sca-n2",
+      "prompt": "Write least-privilege IAM policies for our new service",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
