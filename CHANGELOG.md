@@ -418,6 +418,66 @@ Verified after the rename: zero occurrences of the old slug anywhere outside `no
 `package.json`/`package-lock.json` names agree and `npm ci` succeeds, and every gate and linter is
 green.
 
+**Five skills added, closing every verified reliability and security gap (38 -> 43).** The gap list
+came from diffing this catalogue against `alirezarezvani/claude-skills` (24.6k stars, 346 distinct
+skills, and the origin of `SKILL_PIPELINE.md`). Its topic list was mined; none of its content was
+copied — its descriptions are keyword lists ("Triggers on 'chaos experiment', 'fault injection',
+'gameday' ..."), 16 skill names are duplicated across two directory layouts, and its frontmatter
+schema differs. All five were authored to this repository's standard and passed every gate.
+
+| Skill | Domain | Closes |
+| --- | --- | --- |
+| `supply-chain-security-slsa-sigstore` | DevSecOps | keyless cosign signing, SLSA levels, provenance and SBOM attestation, verified admission |
+| `policy-as-code-opa-kyverno` | DevSecOps | Kyverno/Rego/Conftest authoring, Pod Security Standards, policy unit tests, expiring exceptions |
+| `ai-agent-security-llm-threats` | DevSecOps | indirect prompt injection, OWASP LLM Top 10, MITRE ATLAS, excessive agency, egress containment |
+| `detection-engineering-threat-hunting` | DevSecOps | Sigma detection-as-code, ATT&CK coverage honesty, alert precision, Atomic Red Team validation |
+| `chaos-engineering-resilience-testing` | SRE | steady-state hypotheses, blast-radius bounds, abort criteria, AWS FIS and Chaos Mesh, GameDays |
+
+**A live defect surfaced first: two skills advertised provenance and never covered it.** Both
+`cicd-pipeline-design` and `shift-left-security-sast-sca` listed artifact provenance, signing or
+attestation as a **trigger**, and `cicd-pipeline-design` also named "artifact provenance and
+attestation" in its routing **description** — while `cosign`, `sigstore`, `SLSA` and `attestation`
+appeared **zero** times across both bodies. An agent asked to sign a release artifact loaded one of
+them and found nothing. Compliance point 3 missed it because it compares description to body
+loosely rather than trigger by trigger.
+
+Worse, that skill's `must_cover` anchor was the single word `provenance`, which the coverage gate
+satisfied from one incidental sentence ("provenance requires a clean build"). A one-word anchor can
+certify a topic the skill does not teach. The description now claims only concurrency control, the
+anchor was replaced with `concurrency`, and both skills route the trigger to the new supply-chain
+skill.
+
+**Two territory collisions the new skills created, resolved by dividing scope rather than tuning
+prompts.** `policy-as-code-opa-kyverno` initially claimed "untagged or unencrypted S3 buckets blocked
+in CI", which `enterprise-iac-governance-terragrunt` already owned — the overlap pushed the
+Terragrunt skill's own trigger to `configuration-management-ansible` and its pass rate to 80%. The
+boundary is now explicit: Terragrunt owns multi-account IaC gating, and this skill owns policy
+authoring, admission enforcement and policy testing. Separately, an SBOM-attestation prompt routed
+to `shift-left-security-sast-sca` (rank 2), fixed by tagging the new skill `sbom-attestation` — the
+distinction between _generating_ an SBOM and _binding_ one to a digest is real, not keyword padding.
+Eval loop: 4 failures across 2 iterations, ending at 43/43 and 100.0%.
+
+**The AI-security skill needed the `agent-safety-justified` marker**, and finding out why was useful.
+A skill that teaches detection of agent-directed harm must name the attack shapes — confirmation
+bypass, redirection, concealment — so `compliance-check.py` correctly flagged it as a blocker. The
+one-line marker downgrades it to a reviewed minor. Two details worth recording: the `JUSTIFIED`
+regex is not `DOTALL`, so a multi-line marker silently fails to match; and a reference to
+`scripts/compliance-check.py` was read as a path bundled with the skill, so it is now named without
+a path.
+
+**`README.md` index rows for the five new skills were generated, not hand-written**, by importing
+`sync-all.py`'s own derivation — and the index-agreement gate added earlier is what caught their
+absence in the first place, exactly as designed. Section counts moved to DevSecOps (9) and SRE (5),
+and the nine plugin manifests plus `marketplace.json` picked up the new skill lists automatically.
+
+Gaps identified and deliberately **not** filled: feature-flag progressive delivery (worth adding
+later; `zero-downtime-release-strategies` covers traffic shifting but not flag lifecycle or stale-flag
+debt), runbooks and operational readiness (belongs inside `incident-management-and-postmortem`, not a
+separate skill), and SOC 2 / ISO 27001 evidence automation (pulls a cloud-engineering library toward
+audit consulting). Confirmed _not_ gaps despite appearing in the source catalogue: dependency
+auditing, secrets managers, SLO design, observability design, incident command, and cloud posture —
+all already covered here at equal or greater depth.
+
 ### Notable decisions
 
 - **Eval gate raised from 85% to 95%** across every call site — Makefile default, all four
