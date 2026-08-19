@@ -1,6 +1,6 @@
 {
-  "name": "08-finops-cloud-economics",
-  "description": "FinOps & Cloud Economics: 1 production-grade skills (finops-framework-inform-optimize-operate)",
+  "name": "cloud-aws",
+  "description": "AWS Cloud Architecture: 4 production-grade skills (aws-cloud-migration-strategies, aws-eks-enterprise-patterns, aws-iam-zero-trust-policies...)",
   "version": "1.0.0",
   "author": "mchittineni",
   "homepage": "https://github.com/mchittineni/cloud-platform-skills",

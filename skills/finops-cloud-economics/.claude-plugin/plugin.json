@@ -1,6 +1,6 @@
 {
-  "name": "06-cloud-gcp",
-  "description": "GCP Cloud Architecture: 2 production-grade skills (gcp-cloud-engineering-patterns, gcp-gke-autopilot-multi-tenant)",
+  "name": "finops-cloud-economics",
+  "description": "FinOps & Cloud Economics: 1 production-grade skills (finops-framework-inform-optimize-operate)",
   "version": "1.0.0",
   "author": "mchittineni",
   "homepage": "https://github.com/mchittineni/cloud-platform-skills",

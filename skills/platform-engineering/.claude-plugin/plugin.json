@@ -1,5 +1,5 @@
 {
-  "name": "07-platform-engineering",
+  "name": "platform-engineering",
   "description": "Platform Engineering: 4 production-grade skills (api-gateway-service-mesh, cloud-native-microservices-patterns, internal-developer-portal-backstage...)",
   "version": "1.0.0",
   "author": "mchittineni",

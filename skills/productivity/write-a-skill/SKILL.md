@@ -76,11 +76,11 @@ Run the validation suite locally:
 
 ```bash
 # Run review checklist runner on a skill
-python3 skills/productivity/write-a-skill/scripts/skill_review_checklist_runner.py skills/01-devops-core/mid-level-automation/terraform-iac-modules/SKILL.md
+python3 skills/productivity/write-a-skill/scripts/skill_review_checklist_runner.py skills/devops-core/mid-level-automation/terraform-iac-modules/SKILL.md
 
 # Validate description trigger compliance
-python3 skills/productivity/write-a-skill/scripts/skill_description_validator.py skills/01-devops-core/mid-level-automation/terraform-iac-modules/SKILL.md
+python3 skills/productivity/write-a-skill/scripts/skill_description_validator.py skills/devops-core/mid-level-automation/terraform-iac-modules/SKILL.md
 
 # Validate folder structure
-python3 skills/productivity/write-a-skill/scripts/skill_structure_validator.py skills/01-devops-core/mid-level-automation/terraform-iac-modules/
+python3 skills/productivity/write-a-skill/scripts/skill_structure_validator.py skills/devops-core/mid-level-automation/terraform-iac-modules/
 ```
