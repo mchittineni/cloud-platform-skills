@@ -1,0 +1,76 @@
+---
+description: "AWS migration planning: the 6Rs framework (rehost, replatform, refactor, repurchase, retain, retire), discovery and wave planning, MGN server migration, DMS data cutover with CDC, and rollback criteria. Use when planning a datacenter exit or lease expiry, deciding whether a legacy monolith should be rehosted or refactored, or moving a large Oracle, SQL Server or Postgres database with minimal downtime."
+globs:
+alwaysApply: false
+---
+
+# AWS Cloud Migration: The 6Rs Framework & Migration Automation
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- A workload portfolio must be assessed and assigned migration strategies
+- Migration waves, dependencies, and cutover windows need planning
+- Data must move with minimal downtime (DMS/MGN) and a rollback path
+
+**Route elsewhere when:**
+
+- Post-migration cost governance -> `finops-framework-inform-optimize-operate`
+- Target-state Kubernetes design -> `aws-eks-enterprise-patterns`
+- Schema change mechanics -> `database-devops-lifecycle`
+
+## 1. The 6Rs Migration Decision Tree
+
+```text
+                      [Workload Assessment]
+                                |
+        +-----------------------+-----------------------+
+        |                                               |
+  [Low Change / Fast]                         [Modernize / Optimize]
+        |                                               |
+   +----+----+                                     +----+----+
+   |         |                                     |         |
+Rehost   Replatform                            Refactor  Repurchase
+(Lift &   (Managed DB /                         (Serverless / (SaaS replacement)
+ Shift)   Containers)                           Microservices)
+```
+
+---
+
+## 2. Zero-Downtime Data Migration with AWS DMS (Terraform)
+
+```hcl
+resource "aws_dms_replication_instance" "dms_instance" {
+  replication_instance_id    = "dms-migration-instance"
+  replication_instance_class = "dms.r5.xlarge"
+  allocated_storage          = 100
+  multi_az                   = true
+  vpc_security_group_ids     = [aws_security_group.dms_sg.id]
+  replication_subnet_group_id = aws_dms_replication_subnet_group.dms_subnet_group.id
+}
+
+resource "aws_dms_replication_task" "continuous_cdc" {
+  replication_task_id      = "mysql-to-aurora-cdc"
+  migration_type           = "full-load-and-cdc" # Initial load + continuous replication
+  replication_instance_arn = aws_dms_replication_instance.dms_instance.replication_instance_arn
+  source_endpoint_arn      = aws_dms_endpoint.onprem_mysql.endpoint_arn
+  target_endpoint_arn      = aws_dms_endpoint.aws_aurora.endpoint_arn
+  table_mappings           = jsonencode({
+    rules = [{
+      "rule-type" = "selection",
+      "rule-id"   = "1",
+      "rule-name" = "replicate-all",
+      "object-locator" = { "schema-name" = "%", "table-name" = "%" },
+      "rule-action"    = "include"
+    }]
+  })
+}
+```
+
+---
+
+## 3. Best Practices & Anti-Patterns
+
+- **Do**: Perform continuous CDC (Change Data Capture) replication to achieve near-zero downtime during the final DNS cutover.
+- **Don't**: Never migrate workloads without prior discovery dependency mapping (AWS Application Discovery Service).

@@ -1,0 +1,149 @@
+---
+description: "Ansible configuration management: idempotent playbooks, role architecture, group_vars and host_vars layout, Jinja2 templating, Vault-encrypted variables, and check-mode verification. Use when applying a hardening or CIS baseline repeatably across many Ubuntu or RHEL hosts, refactoring a monolithic playbook into roles, or fixing a playbook that reports 'changed' on every run."
+globs:
+alwaysApply: false
+---
+
+# Declarative Configuration Management with Ansible
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- A fleet of VMs or bare-metal hosts needs repeatable configuration or hardening
+- Playbooks are non-idempotent, monolithic, or untested in check mode
+- Secrets in playbooks need to move to Ansible Vault or an external store
+
+**Route elsewhere when:**
+
+- Immutable infrastructure provisioning -> `terraform-iac-modules`
+- Secret storage and dynamic credential issuance -> `secrets-management-vault-kms`
+
+## 1. Production Ansible Playbook Structure
+
+```yaml
+---
+- name: Hardened Node Baseline Configuration
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars:
+    ntp_servers:
+      - 0.pool.ntp.org
+      - 1.pool.ntp.org
+    sysctl_network_optimizations:
+      net.ipv4.ip_forward: 0
+      net.ipv4.tcp_syncookies: 1
+      net.ipv4.conf.all.accept_redirects: 0
+
+  tasks:
+    - name: Apply security kernel sysctl settings
+      ansible.posix.sysctl:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: true
+      loop: "{{ sysctl_network_optimizations | dict2items }}"
+
+    - name: Ensure SSH daemon is securely configured
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^#?{{ item.key }}"
+        line: "{{ item.key }} {{ item.value }}"
+        state: present
+        validate: "/usr/sbin/sshd -t -f %s"
+      loop:
+        - { key: "PermitRootLogin", value: "no" }
+        - { key: "PasswordAuthentication", value: "no" }
+        - { key: "X11Forwarding", value: "no" }
+      notify: Restart SSH
+
+  handlers:
+    - name: Restart SSH
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
+```
+
+---
+
+## 2. Best Practices & Anti-Patterns
+
+- **Do**: Always test playbooks with `--check --diff` in CI pipelines before deploying to production.
+- **Do**: Encrypt sensitive variables using `ansible-vault`.
+- **Don't**: Never use the `command` or `shell` modules for tasks with native idempotent modules (like `apt`, `yum`, `copy`, `template`, `file`).
+
+---
+
+## 3. Role Architecture & Idempotency Enforcement
+
+```text
+roles/baseline/
+├── defaults/main.yml      # Overridable defaults (lowest precedence)
+├── vars/main.yml          # Role-internal constants (high precedence)
+├── tasks/main.yml         # Entry point; import_tasks per concern
+├── templates/sshd_config.j2   # Jinja2 templates
+├── handlers/main.yml      # Restart/reload handlers
+└── meta/main.yml          # Dependencies, supported platforms
+inventories/prod/
+├── hosts.ini
+├── group_vars/web.yml     # Per-group variables
+└── host_vars/web-01.yml   # Per-host overrides
+```
+
+Variable precedence beats cleverness: put safe defaults in `defaults/`, environment
+differences in `group_vars/`, and never duplicate the same value in both.
+
+### Jinja2 templating with a validation gate
+
+```yaml
+- name: Render sshd config from template
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    mode: "0600"
+    validate: "/usr/sbin/sshd -t -f %s"   # bad render never lands
+  notify: Restart SSH
+```
+
+### Forcing idempotency when a module does not exist
+
+A playbook that reports `changed` on every run has no idempotency, so it cannot be used as a
+drift detector. When `command`/`shell` is unavoidable, constrain it:
+
+```yaml
+- name: Initialise the database schema exactly once
+  ansible.builtin.command: /usr/local/bin/init-schema.sh
+  args:
+    creates: /var/lib/app/.schema-initialised   # skip if this exists
+  register: schema_init
+  changed_when: "'created' in schema_init.stdout"
+  failed_when: schema_init.rc not in [0, 2]
+```
+
+Gate every change in CI with `ansible-playbook --check --diff`: a clean check run against
+production is the proof that the fleet matches the code.
+
+---
+
+## 4. Mapping Roles to a CIS Baseline
+
+Hardening tasks are only auditable when each one names the control it satisfies. Tag tasks with
+the CIS Benchmark control ID so a role doubles as evidence:
+
+```yaml
+- name: CIS 5.2.4 — Ensure SSH X11 forwarding is disabled
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?X11Forwarding'
+    line: 'X11Forwarding no'
+    validate: "/usr/sbin/sshd -t -f %s"
+  tags: [cis, cis_5_2_4, ssh]
+```
+
+Run `--tags cis --check --diff` to produce a drift report against the CIS baseline without
+changing anything; run the same play without `--check` to remediate. Where a CIS control cannot
+be applied (a legacy application needs an insecure setting), record it in the role's
+`defaults/main.yml` as an explicit, commented exception with an owner rather than silently
+dropping the task.

@@ -1,0 +1,121 @@
+---
+description: "Progressive delivery: Argo Rollouts and Flagger canaries with automated Prometheus analysis, blue-green cutover, Istio traffic shifting, and automatic rollback. Use when releasing to a small percentage of traffic first while watching error rate and latency, when a bad deploy must roll back automatically without a human, or when choosing between canary, blue-green and rolling deployment."
+globs:
+alwaysApply: false
+---
+
+# Progressive Delivery & Zero-Downtime Deployment Strategies
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- A release must ship gradually with automated metric-based abort
+- Blue-green vs canary vs rolling must be chosen for a specific workload
+- A rollout needs rollback automation or traffic-shifting configuration
+
+**Route elsewhere when:**
+
+- Mesh-level routing and mTLS policy -> `api-gateway-service-mesh`
+- Continuous delivery plumbing that triggers the rollout -> `gitops-multi-cluster-argo-flux`
+- Analysis metric definition -> `sli-slo-error-budget-design`
+
+## 1. Automated Canary with Argo Rollouts & Prometheus Analysis
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: order-service
+  namespace: production
+spec:
+  replicas: 10
+  strategy:
+    canary:
+      analysis:
+        templates:
+          - templateName: success-rate-metric
+        args:
+          - name: service-name
+            value: order-service
+      steps:
+        - setWeight: 5
+        - pause: { duration: 5m }
+        - setWeight: 20
+        - pause: { duration: 10m }
+        - setWeight: 50
+        - pause: { duration: 10m }
+```
+
+### Automated Metric Analysis Template (`AnalysisTemplate`)
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: success-rate-metric
+  namespace: production
+spec:
+  metrics:
+    - name: http-success-rate
+      interval: 1m
+      successCondition: result[0] >= 0.999
+      failureLimit: 2
+      provider:
+        prometheus:
+          address: http://prometheus-k8s.monitoring:9090
+          query: |
+            sum(rate(http_requests_total{service="order-service",status!~"5.*"}[2m]))
+            /
+            sum(rate(http_requests_total{service="order-service"}[2m]))
+```
+
+---
+
+## 2. Strategy Selection Guide
+
+- **Blue/Green**: Best for workloads that cannot tolerate version coexistence or require instant atomic rollbacks.
+- **Canary with Step Analysis**: Ideal for customer-facing high-throughput microservices where real-user metrics validate regression risk.
+- **Shadow/Dark Traffic**: Forward duplicate production read traffic to candidate versions to test performance under true load without user impact.
+
+---
+
+## 3. Flagger with Istio Traffic Shifting
+
+Argo Rollouts owns the workload; Flagger drives the mesh and works well when Istio already
+carries the traffic policy:
+
+```yaml
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata: { name: checkout, namespace: prod }
+spec:
+  provider: istio
+  targetRef: { apiVersion: apps/v1, kind: Deployment, name: checkout }
+  service:
+    port: 8080
+    gateways: [istio-system/public-gateway]
+    hosts: [checkout.example.com]
+    retries: { attempts: 3, perTryTimeout: 2s }
+  analysis:
+    interval: 1m
+    threshold: 5              # failed checks before rollback
+    maxWeight: 50
+    stepWeight: 5             # 5% -> 10% -> ... automatic weighted shift
+    metrics:
+      - name: request-success-rate
+        thresholdRange: { min: 99 }
+        interval: 1m
+      - name: request-duration
+        thresholdRange: { max: 500 }
+        interval: 1m
+    webhooks:
+      - name: load-test
+        url: http://flagger-loadtester.prod/
+        metadata: { cmd: "hey -z 1m -q 10 -c 2 http://checkout-canary:8080/" }
+```
+
+Flagger generates and owns the Istio `VirtualService`; do not hand-edit it or the next
+reconciliation reverts the change. Under the hood both approaches do the same thing — shift a
+weight, evaluate metrics over a window, promote or roll back — so choose by which control plane
+already owns routing, not by feature lists.
