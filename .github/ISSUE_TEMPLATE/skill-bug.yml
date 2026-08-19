@@ -1,0 +1,45 @@
+name: Skill defect
+description: A skill gives wrong, outdated, or dangerous guidance
+title: "skill: <skill-name> — <short summary>"
+labels: [bug, skill-content]
+body:
+  - type: input
+    id: skill
+    attributes:
+      label: Skill
+      description: Directory name, e.g. aws-eks-enterprise-patterns
+      placeholder: skill-name
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What the skill says, and why it is wrong
+      description: Quote the line or section. If it is version-specific, say which version changed it.
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What it should say
+      description: Ideally with a link to upstream documentation.
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Impact if someone follows it
+      options:
+        - Dangerous — data loss, outage, or credential exposure
+        - Wrong — produces a broken or non-working result
+        - Outdated — worked previously, superseded upstream
+        - Misleading — technically true but leads to a bad decision
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Before submitting
+      options:
+        - label: This is not a security vulnerability (those go through SECURITY.md privately)
+          required: true

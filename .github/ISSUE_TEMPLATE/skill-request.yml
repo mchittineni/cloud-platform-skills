@@ -1,0 +1,49 @@
+name: New skill request
+description: Propose a skill this library does not yet cover
+title: "new skill: <proposed-name>"
+labels: [enhancement, new-skill]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A new skill that overlaps an existing one degrades routing for both. Check the index in
+        `README.md` first, and say below why an existing skill cannot absorb this.
+  - type: input
+    id: name
+    attributes:
+      label: Proposed name (kebab-case)
+      placeholder: aws-network-firewall-patterns
+    validations:
+      required: true
+  - type: textarea
+    id: triggers
+    attributes:
+      label: Triggers — what would a user type to reach it?
+      description: Three realistic requests, in the user's words. These become the eval cases.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Why an existing skill cannot own this
+      description: Name the closest existing skill and the boundary between them.
+    validations:
+      required: true
+  - type: textarea
+    id: depth
+    attributes:
+      label: Expert content it would carry
+      description: The artifacts, decisions, and anti-patterns that make it POWERFUL rather than generic.
+    validations:
+      required: true
+  - type: dropdown
+    id: level
+    attributes:
+      label: Level
+      options: [junior, mid, senior, staff, principal, all]
+    validations:
+      required: true

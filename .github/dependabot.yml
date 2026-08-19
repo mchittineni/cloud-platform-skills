@@ -1,0 +1,56 @@
+version: 2
+updates:
+  # GitHub Actions is the only third-party code with repository access, so this is the
+  # highest-value ecosystem to keep current. Dependabot rewrites SHA pins and keeps the
+  # trailing version comment accurate.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+      include: scope
+    labels: [dependencies, ci, security]
+    groups:
+      actions-minor-patch:
+        applies-to: version-updates
+        update-types: [minor, patch]
+
+  # The documentation toolchain is the only dependency tree in the repository.
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:15"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "docs"
+      include: scope
+    labels: [dependencies, documentation]
+    groups:
+      mkdocs:
+        patterns: ["mkdocs*"]
+
+  # The markdown/JSON/YAML lint toolchain. package.json is the single source of truth for these
+  # pins — the Makefile and CI both go through `npm ci`, so a Dependabot bump lands everywhere.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:30"
+      timezone: Etc/UTC
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore"
+      include: scope
+    labels: [dependencies, tooling]
+    groups:
+      lint-toolchain:
+        patterns: ["markdownlint-cli2", "prettier"]
