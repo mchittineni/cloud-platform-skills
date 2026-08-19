@@ -1,0 +1,145 @@
+# Multi-Cluster Enterprise GitOps with ArgoCD ApplicationSets
+
+!!! info "Skill metadata"
+    **Name** `gitops-multi-cluster-argo-flux` · **Level** `senior` · **Tags** `gitops` `argocd` `flux` `multi-cluster` `kubernetes` `devops-core`
+
+    "Multi-cluster GitOps with ArgoCD ApplicationSets, app-of-apps topology, and Flux v2: fleet reconciliation, sync waves, prune and self-heal semantics, drift detection. Use when managing many clusters or environments declaratively, deciding how to structure repositories, branches and overlays to promote a release from staging to production, or debugging an Application stuck OutOfSync."
+
+    Source: [`skills/devops-core/senior-staff-architect/gitops-multi-cluster-argo-flux/SKILL.md`](https://github.com/mchittineni/cloud-platform-skills/blob/main/skills/devops-core/senior-staff-architect/gitops-multi-cluster-argo-flux/SKILL.md)
+
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- Many clusters or environments must be reconciled from Git declaratively
+- Environment promotion needs a repo/branch/overlay topology decided
+- An Application is OutOfSync, degraded, or drifting from Git
+
+**Route elsewhere when:**
+
+- Canary/blue-green traffic control inside a rollout -> `zero-downtime-release-strategies`
+- Chart authoring itself -> `helm-kubernetes-deployment`
+- Build/test pipelines upstream of Git -> `cicd-pipeline-design`
+
+## 1. Declarative Fleet Architecture (App of Apps / ApplicationSet)
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-addons
+  namespace: argocd
+spec:
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            environment: production
+  template:
+    metadata:
+      name: '{{name}}-addons'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/org/k8s-fleet-manifests.git'
+        targetRevision: HEAD
+        path: 'addons/base'
+        helm:
+          valueFiles:
+            - 'values-{{metadata.labels.region}}.yaml'
+      destination:
+        server: '{{server}}'
+        namespace: kube-system
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+```
+
+---
+
+## 2. GitOps Best Practices
+
+- **Immutable Tags/SHAs**: Never point GitOps targets at mutable tags like `:latest`; reference immutable Git commits or image digests (`sha256:...`).
+- **Separation of Repositories**: Maintain dedicated code repositories for application source code and separate config repositories for deployment state.
+- **Automated Self-Healing**: Enable `selfHeal: true` to prevent manual cluster drift via direct `kubectl` manipulations.
+
+---
+
+## 3. Sync Waves & Reconciliation Semantics
+
+Ordering inside a single Application is controlled by **sync waves** — lower waves complete
+before higher ones start:
+
+```yaml
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"        # CRDs and namespaces first
+    argocd.argoproj.io/hook: PreSync          # migrations before the new version rolls
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+```
+
+Typical layout: `-2` namespaces/quotas, `-1` CRDs and operators, `0` config and secrets,
+`1` workloads, `2` ingress and probes-dependent jobs.
+
+**When self-heal fights a controller**, the resource is being mutated in-cluster after sync
+(HPA changing replicas, a mutating webhook injecting fields). Declare the field as
+controller-owned instead of turning self-heal off:
+
+```yaml
+syncPolicy:
+  automated: { prune: true, selfHeal: true }
+ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers: ["/spec/replicas"]         # HPA owns replica count
+```
+
+`prune: true` is what makes Git authoritative for deletions; without it, removed manifests
+linger forever. Enable it only once the repository is genuinely the source of truth.
+
+---
+
+## 4. The Flux v2 Equivalent
+
+Flux expresses the same fleet model with `GitRepository` + `Kustomization` and per-tenant
+`ServiceAccount` impersonation:
+
+```yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata: { name: fleet, namespace: flux-system }
+spec:
+  interval: 1m
+  url: https://github.com/acme/fleet
+  ref: { branch: main }
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata: { name: apps-prod, namespace: flux-system }
+spec:
+  interval: 10m
+  path: ./clusters/prod/apps
+  prune: true                        # same semantics as ArgoCD prune
+  wait: true
+  timeout: 5m
+  dependsOn: [{ name: infra-prod }]  # ordering, where Argo uses sync waves
+  sourceRef: { kind: GitRepository, name: fleet }
+  serviceAccountName: prod-reconciler
+  postBuild:
+    substituteFrom: [{ kind: ConfigMap, name: cluster-vars }]
+```
+
+| Concern | ArgoCD | Flux v2 |
+| --- | --- | --- |
+| Fan-out across clusters | ApplicationSet generators | One Kustomization per cluster path, or `flux-operator` |
+| Ordering | `sync-wave` annotations | `dependsOn` |
+| Drift correction | `selfHeal: true` | Reconciliation every `interval` |
+| UI / RBAC surface | Built-in web UI | CLI + Grafana dashboards |
+
+Pick one per cluster. Running both against the same namespace produces two controllers fighting
+over the same resources.
