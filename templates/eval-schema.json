@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cloud-platform-skills/templates/eval-schema.json",
+  "title": "Skill eval suite",
+  "description": "Test cases for one skill. Consumed by scripts/run-evals.py (offline routing + coverage gates) and by any LLM-graded with-skill/baseline harness.",
+  "type": "object",
+  "required": ["skill", "version", "must_cover", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "skill": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "must_cover": {
+      "description": "Literal technical anchors (API fields, tool names, named patterns) the SKILL.md body must contain for its assertions to be satisfiable. A miss is a content gap.",
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 2
+      }
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 5,
+      "description": "At least 3 should-trigger and 2 should-not-trigger cases, phrased as a real user would type them.",
+      "items": {
+        "type": "object",
+        "required": ["id", "prompt", "should_trigger", "assertions"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 10
+          },
+          "should_trigger": {
+            "type": "boolean"
+          },
+          "files": {
+            "type": "array",
+            "description": "Relative paths to fixture files the case depends on (assets/).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assertions": {
+            "type": "array",
+            "description": "Behavioural statements about a correct response. Graded by an LLM grader; must discriminate against a no-skill baseline.",
+            "items": {
+              "type": "string",
+              "minLength": 15
+            }
+          },
+          "known_residual": {
+            "type": "string",
+            "minLength": 40,
+            "description": "Justification for a case that fails the offline routing gate for a defensible reason (e.g. a genuine near-tie with a sibling skill). Reported every run but does not fail the gate. Requires review; never use it to paper over a weak description."
+          }
+        }
+      }
+    }
+  }
+}

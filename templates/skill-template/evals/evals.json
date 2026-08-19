@@ -1,0 +1,47 @@
+{
+  "$schema": "../../eval-schema.json",
+  "skill": "skill-name-in-kebab-case",
+  "version": "1.0.0",
+  "must_cover": ["LiteralToolName", "apiFieldName", "named pattern"],
+  "cases": [
+    {
+      "id": "skill-name-in-kebab-case-t1",
+      "prompt": "A realistic request, phrased the way a user would actually type it.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Does the specific expert thing this skill exists to teach, rather than generic advice",
+        "Names the concrete mechanism or field that makes the answer correct",
+        "States the failure mode or trade-off a baseline answer would omit"
+      ]
+    },
+    {
+      "id": "skill-name-in-kebab-case-t2",
+      "prompt": "A second realistic request, ideally a symptom rather than a topic.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": ["..."]
+    },
+    {
+      "id": "skill-name-in-kebab-case-t3",
+      "prompt": "A third realistic request.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": ["..."]
+    },
+    {
+      "id": "skill-name-in-kebab-case-n1",
+      "prompt": "A plausible request that belongs to a sibling skill, not this one.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "skill-name-in-kebab-case-n2",
+      "prompt": "A second near-miss request that must not route here.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
