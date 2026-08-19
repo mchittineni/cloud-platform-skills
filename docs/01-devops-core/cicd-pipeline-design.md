@@ -3,7 +3,7 @@
 !!! info "Skill metadata"
     **Name** `cicd-pipeline-design` · **Level** `mid` · **Tags** `cicd` `github-actions` `gitlab-ci` `automation` `devops-core`
 
-    "CI/CD pipeline architecture for GitHub Actions and GitLab CI: matrix testing, dependency caching, OIDC keyless cloud authentication, security gating, artifact provenance and attestation. Use when a pipeline is slow because every job reinstalls dependencies, when long-lived AWS or cloud access keys stored as CI secrets must be removed, or when building, gating and speeding up a build-test-deploy workflow."
+    "CI/CD pipeline architecture for GitHub Actions and GitLab CI: matrix testing, dependency caching, OIDC keyless cloud authentication, security gating, and concurrency control. Use when a pipeline is slow because every job reinstalls dependencies, when long-lived AWS or cloud access keys stored as CI secrets must be removed, or when building, gating and speeding up a build-test-deploy workflow."
 
     Source: [`skills/01-devops-core/mid-level-automation/cicd-pipeline-design/SKILL.md`](https://github.com/mchittineni/cloud-platform-skills/blob/main/skills/01-devops-core/mid-level-automation/cicd-pipeline-design/SKILL.md)
 
@@ -14,13 +14,13 @@
 
 - A new pipeline is being authored, or an existing one is slow, flaky, or ungated
 - Static cloud keys in CI must be replaced with OIDC short-lived credentials
-- Release artifacts need provenance, signing, or attestation
 
 **Route elsewhere when:**
 
 - Deployment/rollout mechanics after the artifact is built -> `zero-downtime-release-strategies`
 - Cluster reconciliation from Git rather than pipeline push -> `gitops-multi-cluster-argo-flux`
 - Scanner selection and gate thresholds -> `shift-left-security-sast-sca`
+- Signing, provenance, or attestation for the artifact -> `supply-chain-security-slsa-sigstore`
 
 ## 1. GitHub Actions Production Standard Pipeline
 

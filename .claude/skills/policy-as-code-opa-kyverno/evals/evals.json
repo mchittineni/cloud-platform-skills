@@ -1,0 +1,65 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "policy-as-code-opa-kyverno",
+  "version": "1.0.0",
+  "must_cover": [
+    "Kyverno",
+    "ClusterPolicy",
+    "validationFailureAction",
+    "Gatekeeper",
+    "ConstraintTemplate",
+    "Conftest",
+    "Pod Security",
+    "PolicyException",
+    "failurePolicy"
+  ],
+  "cases": [
+    {
+      "id": "policy-as-code-opa-kyverno-t1",
+      "prompt": "Block privileged containers and pods with no resource limits from being admitted to our cluster.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Starts from Pod Security Standards, then adds a Kyverno ClusterPolicy for what PSA cannot express",
+        "Rolls out Audit with background:true before switching validationFailureAction to Enforce",
+        "Scopes to namespaces and excludes kube-system so cluster components are not blocked"
+      ]
+    },
+    {
+      "id": "policy-as-code-opa-kyverno-t2",
+      "prompt": "Our Kyverno admission policies have no tests and one silently stopped matching. How do we test policy as code?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Runs kyverno test with resource fixtures and conftest verify on Rego test rules, both in CI",
+        "Warns that an untested guardrail silently stops matching after a schema or API change",
+        "Keeps policies and their tuning filters in version control with an owner and a review date"
+      ]
+    },
+    {
+      "id": "policy-as-code-opa-kyverno-t3",
+      "prompt": "Should we use Kyverno or OPA Gatekeeper for our platform, and how do we handle workloads that legitimately need an exception?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Chooses between Kyverno and Gatekeeper on concrete criteria including mutation and Rego logic",
+        "Warns against running both engines for overlapping concerns",
+        "Requires every PolicyException to carry an owner, a reason, and an expiry enforced in CI"
+      ]
+    },
+    {
+      "id": "policy-as-code-opa-kyverno-n1",
+      "prompt": "Design an SLO and burn-rate alerts for our checkout API.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "policy-as-code-opa-kyverno-n2",
+      "prompt": "A leaked AWS access key from a public repo has already been used. What do I do?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -5,7 +5,7 @@ platform engineer working in the cloud-platform-skills repository.
 
 ## Skill activation
 
-38 skills are discoverable under `.agents/skills/<skill-name>/SKILL.md`. Activate a
+43 skills are discoverable under `.agents/skills/<skill-name>/SKILL.md`. Activate a
 single skill whose triggers match the request — each file opens with a `## When to Use This
 Skill` block that states both its triggers and when to route to a sibling skill. Use
 `activate_skill(name="<skill-name>")` where the runtime provides it. Never load the whole

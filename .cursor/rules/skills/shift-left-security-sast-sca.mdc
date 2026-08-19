@@ -12,13 +12,14 @@ alwaysApply: false
 
 - A pipeline needs SAST, SCA, secret, and image scanning wired in with clear gates
 - Scanner noise or blocking thresholds need tuning to stay credible
-- An SBOM or provenance artifact is required for compliance or a customer
+- An SBOM is required for compliance or a customer
 
 **Route elsewhere when:**
 
 - Runtime container detection -> `container-runtime-security-falco`
 - Cloud misconfiguration posture -> `cloud-security-posture-cspm-cis`
 - Handling a confirmed live compromise -> `secops-incident-triage-forensics`
+- Signing the artifact or attesting the SBOM to it -> `supply-chain-security-slsa-sigstore`
 
 ## 1. Automated Security Scanning Pipeline
 

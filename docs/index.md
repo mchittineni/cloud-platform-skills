@@ -1,6 +1,6 @@
 # Cloud & Platform Engineering Skills
 
-38 production-grade skills for Cloud, Platform, SRE, Security and FinOps engineering — portable across Claude Code, Antigravity/Gemini CLI, Codex, Cursor and GitHub Copilot.
+43 production-grade skills for Cloud, Platform, SRE, Security and FinOps engineering — portable across Claude Code, Antigravity/Gemini CLI, Codex, Cursor and GitHub Copilot.
 
 Each skill states its own activation triggers and, critically, when to route elsewhere. Load one skill, never the library.
 
@@ -28,16 +28,21 @@ Each skill states its own activation triggers and, critically, when to route els
 
 | Skill | Level | Load when |
 | --- | --- | --- |
+| [ai-agent-security-llm-threats](02-devsecops-and-secops/ai-agent-security-llm-threats.md) | senior | Use when an agent is given tools or credentials, when retrieved documents or repository files could carry injected instructions, or when reviewing an AI feature before it reaches production." |
 | [cloud-security-posture-cspm-cis](02-devsecops-and-secops/cloud-security-posture-cspm-cis.md) | senior | Use when auditing an account or organization's security posture, finding unused and over-permissive permissions across hundreds of roles, preparing for a CIS or compliance review, or triaging misconfiguration findings." |
 | [container-runtime-security-falco](02-devsecops-and-secops/container-runtime-security-falco.md) | senior | Use when alerting on attacker behaviour inside a running container such as an interactive shell being opened in production, writing or tuning a noisy Falco rule, or triaging a runtime alert." |
+| [detection-engineering-threat-hunting](02-devsecops-and-secops/detection-engineering-threat-hunting.md) | senior | Use when security alerts are too noisy to act on, when deciding which detections to write and which telemetry to collect first, or when hunting for attacker activity nothing has alerted on." |
+| [policy-as-code-opa-kyverno](02-devsecops-and-secops/policy-as-code-opa-kyverno.md) | senior | Use when privileged containers or pods without resource limits must be rejected at admission rather than reported, when admission policies need tests so a rule cannot silently stop matching, or when choosing between Kyverno and OPA Gatekeeper." |
 | [secops-incident-triage-forensics](02-devsecops-and-secops/secops-incident-triage-forensics.md) | staff | Use when a host, container or cloud credential is suspected compromised, when a leaked access key found in a public repository has already been used, or when capturing evidence." |
 | [secrets-management-vault-kms](02-devsecops-and-secops/secrets-management-vault-kms.md) | senior | Use when a database password or API key sits in a plain Kubernetes Secret or a manifest checked into Git, or when workloads need credential material injected at runtime without storing it." |
 | [shift-left-security-sast-sca](02-devsecops-and-secops/shift-left-security-sast-sca.md) | mid | Use when adding code, dependency or image scanning to a CI pipeline, when a scanner reports hundreds of findings that developers now ignore and gates need tuning for false positives, or when a customer or auditor asks for an SBOM produced by the build." |
+| [supply-chain-security-slsa-sigstore](02-devsecops-and-secops/supply-chain-security-slsa-sigstore.md) | senior | Use when release artifacts or container images need signing, provenance or attestation, when a customer or auditor asks which SLSA level a build meets, or when only trusted and verified images should be allowed to run in a cluster." |
 
 ## SRE & Observability
 
 | Skill | Level | Load when |
 | --- | --- | --- |
+| [chaos-engineering-resilience-testing](03-sre-slo-sla-observability/chaos-engineering-resilience-testing.md) | senior | Use when a failover or redundancy claim has never actually been tested, when planning a GameDay or resilience exercise, or when deciding whether it is safe to inject failure into production and how to bound it." |
 | [incident-management-and-postmortem](03-sre-slo-sla-observability/incident-management-and-postmortem.md) | staff | Use when running or improving incident response, declaring severity, coordinating an active outage, or writing a post-mortem." |
 | [infrastructure-host-monitoring](03-sre-slo-sla-observability/infrastructure-host-monitoring.md) | mid | Use when standing up monitoring or dashboards across a fleet of nodes, authoring or tuning infrastructure alert rules, or arranging to be paged before a filesystem fills rather than after it is already full." |
 | [prometheus-grafana-otel-tracing](03-sre-slo-sla-observability/prometheus-grafana-otel-tracing.md) | senior | Use when instrumenting services so a latency spike can be followed to the exact trace and log line, building the metrics-logs-traces stack, or fixing missing telemetry and cardinality blowups." |
