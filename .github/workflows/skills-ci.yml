@@ -1,5 +1,4 @@
-name: skills-ci
-
+name: Validate & lint skills
 on:
   push:
     branches: [main]
@@ -106,9 +105,5 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-
-      # `make lint` runs markdownlint + prettier + ruff. Going through the Makefile keeps the
-      # tool pins in exactly one place each (package.json for node, RUFF_VERSION for ruff) and
-      # guarantees `npm ci` runs, so CI and a developer laptop lint with identical versions.
       - name: Markdown, JSON/YAML and Python lint
         run: make lint
