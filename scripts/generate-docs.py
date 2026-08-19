@@ -23,14 +23,14 @@ SKILLS = ROOT / "skills"
 DOCS = ROOT / "docs"
 
 DOMAIN_TITLES = {
-    "01-devops-core": "DevOps Core",
-    "02-devsecops-and-secops": "DevSecOps & SecOps",
-    "03-sre-slo-sla-observability": "SRE & Observability",
-    "04-cloud-aws": "AWS",
-    "05-cloud-azure": "Azure",
-    "06-cloud-gcp": "GCP",
-    "07-platform-engineering": "Platform Engineering",
-    "08-finops-cloud-economics": "FinOps",
+    "devops-core": "DevOps Core",
+    "devsecops-and-secops": "DevSecOps & SecOps",
+    "sre-slo-sla-observability": "SRE & Observability",
+    "cloud-aws": "AWS",
+    "cloud-azure": "Azure",
+    "cloud-gcp": "GCP",
+    "platform-engineering": "Platform Engineering",
+    "finops-cloud-economics": "FinOps",
     "productivity": "Productivity",
 }
 
