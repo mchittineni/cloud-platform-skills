@@ -1,0 +1,64 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "supply-chain-security-slsa-sigstore",
+  "version": "1.0.0",
+  "must_cover": [
+    "cosign",
+    "keyless",
+    "certificate-identity",
+    "SLSA",
+    "provenance",
+    "attestation",
+    "mutateDigest",
+    "digest, never the tag"
+  ],
+  "cases": [
+    {
+      "id": "supply-chain-security-slsa-sigstore-t1",
+      "prompt": "Sign our container images in CI and have the cluster verify the signature before running them.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Signs the image digest with keyless cosign, requiring id-token: write for the OIDC exchange",
+        "Verification pins --certificate-identity and --certificate-oidc-issuer, not a bare cosign verify",
+        "Enforces at admission with Kyverno verifyImages or the sigstore policy-controller, using mutateDigest"
+      ]
+    },
+    {
+      "id": "supply-chain-security-slsa-sigstore-t2",
+      "prompt": "An auditor is asking which SLSA level our build pipeline meets and wants provenance attestations.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Maps SLSA L1/L2/L3 to the specific attack each level stops, not just the label",
+        "Generates in-toto provenance via actions/attest-build-provenance and verifies it",
+        "States that self-hosted runners generally do not reach L3, so the claimed level must match reality"
+      ]
+    },
+    {
+      "id": "supply-chain-security-slsa-sigstore-t3",
+      "prompt": "Nothing proves our SBOM belongs to the image we deployed. How do we attest it to the digest and verify that attestation?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Attests the SBOM to the artifact digest with cosign attest --type cyclonedx",
+        "Verifies with cosign verify-attestation using pinned identity and issuer",
+        "States that an unattested SBOM is an unsigned claim and is not evidence"
+      ]
+    },
+    {
+      "id": "supply-chain-security-slsa-sigstore-n1",
+      "prompt": "Our Semgrep scan reports 400 findings and developers ignore it. How do I tune the gate?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "supply-chain-security-slsa-sigstore-n2",
+      "prompt": "Falco fired a runtime alert about a shell opened inside a production pod.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

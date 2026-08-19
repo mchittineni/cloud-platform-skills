@@ -1,0 +1,65 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "ai-agent-security-llm-threats",
+  "version": "1.0.0",
+  "must_cover": [
+    "indirect",
+    "prompt injection",
+    "OWASP",
+    "MITRE ATLAS",
+    "Excessive agency",
+    "egress",
+    "allowlist",
+    "untrusted input",
+    "MCP"
+  ],
+  "cases": [
+    {
+      "id": "ai-agent-security-llm-threats-t1",
+      "prompt": "We are giving an agent tools and cloud credentials. How do we stop prompt injection from turning into real damage?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Treats containment rather than filtering as the control, assuming the injection succeeds",
+        "Scopes each tool to one capability and refuses a universal run-anything or fetch-any-URL tool",
+        "Adds an egress allowlist, human confirmation on irreversible actions, and short-lived scoped credentials"
+      ]
+    },
+    {
+      "id": "ai-agent-security-llm-threats-t2",
+      "prompt": "Our RAG assistant reads customer tickets and web pages. Those documents could contain instructions aimed at the model.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Names indirect prompt injection as the higher-exposure form because the attacker needs no account",
+        "Isolates the vector index per tenant and authorises retrieval, not just the query",
+        "Treats model output as untrusted input, parameterising or escaping it before it reaches another system"
+      ]
+    },
+    {
+      "id": "ai-agent-security-llm-threats-t3",
+      "prompt": "Review this third-party MCP server and skill before we adopt it, against the OWASP LLM Top 10.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Maps each OWASP LLM Top 10 entry to a concrete control rather than restating the list",
+        "Reviews the skill as untrusted code: redirection, exfiltration shape, confirmation bypass, disproportionate permissions",
+        "Reviews MCP tool descriptions too, since description text is model-visible and is itself an injection vector"
+      ]
+    },
+    {
+      "id": "ai-agent-security-llm-threats-n1",
+      "prompt": "Tune our Semgrep and Trivy gates so the pipeline blocks only actionable severities.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "ai-agent-security-llm-threats-n2",
+      "prompt": "Design multi-window burn-rate alerts against a 99.9% availability SLO.",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
