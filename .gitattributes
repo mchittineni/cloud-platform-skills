@@ -1,0 +1,25 @@
+* text=auto eol=lf
+
+*.md      text diff=markdown
+*.py      text diff=python
+*.sh      text eol=lf
+*.json    text
+*.yml     text
+*.yaml    text
+*.mdc     text
+*.hcl     text
+*.tf      text
+
+# Generated runtime targets: keep them out of PR diffs by default. They are
+# verified fresh by `scripts/sync-all.py --check`, so reviewers read skills/ instead.
+.claude/skills/**   linguist-generated=true
+.agents/skills/**   linguist-generated=true
+.cursor/rules/**    linguist-generated=true
+docs/**             linguist-generated=true
+mkdocs.yml          linguist-generated=true
+AGENTS.md           linguist-generated=true
+CLAUDE.md           linguist-generated=true
+.github/copilot-instructions.md linguist-generated=true
+
+# Treat skills as documentation for language statistics
+skills/**  linguist-documentation=false
