@@ -5,7 +5,7 @@ All notable changes to this repository. Versioning follows `CONTRIBUTING.md`.
 ## [1.0.0] - 2026-08-19
 
 First released version. Everything below describes the state of the library at 1.0.0 relative to
-the unreleased pre-1.0 working tree: all 38 skills brought onto the mandatory skill production
+the unreleased pre-1.0 working tree: all 43 skills brought onto the mandatory skill production
 pipeline, cross-runtime packaging rebuilt around a single source of truth, and the repository's own
 CI, security and release machinery built to the same standard the skills teach.
 
@@ -14,7 +14,7 @@ CI, security and release machinery built to the same standard the skills teach.
 #### Quality gates (stdlib-only Python 3.10+, offline, no LLM required)
 
 - `scripts/run-evals.py` — offline, deterministic eval harness (pipeline Phase 3/5). Indexes every
-  skill's routing document and scores each eval prompt tf-idf against all 38 skills, so a
+  skill's routing document and scores each eval prompt tf-idf against all 43 skills, so a
   should-trigger case passes only when its own skill ranks #1 and a should-not-trigger case passes
   only when it does not. Also gates `must_cover` content anchors. Emits `benchmark.json` with a
   per-skill tier.
@@ -48,9 +48,9 @@ CI, security and release machinery built to the same standard the skills teach.
 
 #### Skill content
 
-- `evals/evals.json` for all 38 skills — 3 should-trigger + 2 should-not-trigger cases in real user
-  phrasing, grounded assertions, and `must_cover` anchors. 190 cases total.
-- `## When to Use This Skill` routing block in all 38 skills: explicit **Triggers** plus **Route
+- `evals/evals.json` for all 43 skills — 3 should-trigger + 2 should-not-trigger cases in real user
+  phrasing, grounded assertions, and `must_cover` anchors. 215 cases total.
+- `## When to Use This Skill` routing block in all 43 skills: explicit **Triggers** plus **Route
   elsewhere** pointers that cross-link the library so an agent can tell when _not_ to use a skill.
 - 44 new expert sections closing gaps the evals and compliance gate exposed, including: Ansible
   role architecture and CIS control tagging; Flyway versioned migrations and Atlas declarative
@@ -124,7 +124,7 @@ CI, security and release machinery built to the same standard the skills teach.
 
 ### Changed
 
-- Rewrote all 38 descriptions as routing decisions: third person, concrete tooling named, explicit
+- Rewrote all 43 descriptions as routing decisions: third person, concrete tooling named, explicit
   `Use when …` triggers in the words users actually type (symptoms such as "No space left on
   device", "playbook reports changed every run", "the bill jumped 40%"), and seniority moved out of
   the description into `level`. Routing pass rate: **41.6% → 100%**.
@@ -134,7 +134,7 @@ CI, security and release machinery built to the same standard the skills teach.
   budget, cross-skill reference resolution, duplicate-name detection, `--check-sync`, `--strict`,
   `--json`.
 - `.cursor/rules/` restructured from nine always-applied files containing full skill bodies
-  (~940 lines each) into one compact always-applied routing index plus 38 per-skill rules with
+  (~940 lines each) into one compact always-applied routing index plus 43 per-skill rules with
   `alwaysApply: false`, so Cursor fetches a skill on request instead of injecting the library.
 - `.github/copilot-instructions.md` rebuilt as principles plus routing index.
 - `export-to-claude.sh`, `export-to-cursor.sh`, `export-to-antigravity.sh` are now thin wrappers
@@ -144,6 +144,23 @@ CI, security and release machinery built to the same standard the skills teach.
   pinned `pip install -r requirements-dev.txt` instead of an unpinned install.
 - `agents/cs-skill-author.md` and `commands/cs-write-a-skill.md` now carry the required frontmatter
   and the pipeline's agent/command section structure.
+- **Numeric prefixes dropped from the skill domain directories and plugin names.**
+  `skills/01-devops-core/` … `skills/08-finops-cloud-economics/` became `skills/devops-core/` …
+  `skills/finops-cloud-economics/`; `productivity` was already unprefixed. The prefixes were not
+  load-bearing: both `scripts/sync-all.py` and `scripts/generate-docs.py` render domains by
+  iterating `DOMAIN_TITLES` in insertion order, never by sorting directory names, so the curated
+  DevOps → Security → SRE → Cloud → Platform → FinOps sequence in the README index, the docs nav
+  and `marketplace.json` is unchanged. The plugin name is what a user types, so anyone who
+  installed from the pre-1.0 tree reinstalls under the flat name:
+
+  ```bash
+  /plugin uninstall 04-cloud-aws     # pre-1.0 name
+  /plugin install cloud-aws@cloud-platform-skills
+  ```
+
+- `INSTALLATION.md` and `STORE.md` per-plugin skill counts corrected — both still carried the
+  pre-1.0 totals for `devsecops-and-secops` (5, actually 9) and `sre-slo-sla-observability`
+  (4, actually 5).
 
 ### Removed
 
@@ -199,8 +216,8 @@ CI, security and release machinery built to the same standard the skills teach.
 
 | Gate | Result |
 | --- | --- |
-| `validate-skills.py --check-sync --strict` | 38 passed, 0 failed, 0 warnings |
-| `compliance-check.py` | 38/38 POWERFUL, average **100.0**, 0 blockers |
+| `validate-skills.py --check-sync --strict` | 43 passed, 0 failed, 0 warnings |
+| `compliance-check.py` | 43/43 POWERFUL, average **100.0**, 0 blockers |
 | `run-evals.py --min-pass-rate 95` | overall **100.0%** (POWERFUL), 2 documented residuals |
 | `audit-workflows.py` | 0 blocker, 0 major, 0 minor across 4 workflows |
 | `sync-all.py --check` | all generated targets in sync |
@@ -390,10 +407,10 @@ command was checked against the script it invokes — the first draft claimed a 
 
 **Renamed from `devops-skills-curated` to `cloud-platform-skills`.** The old name had four
 problems: `curated` is unfalsifiable self-praise that in the GitHub ecosystem signals _a list of
-links_ rather than 38 executable, eval-gated skills; the adjective-last word order read as a sorting
-key, not a name; `devops` undersold the scope, since only 15 of 38 skills live in `01-devops-core`
-against 8 cloud, 5 security, 4 platform, 4 SRE and 1 FinOps; and `devops-skills` is a crowded
-namespace of roadmap and interview-prep repositories.
+links_ rather than 43 executable, eval-gated skills; the adjective-last word order read as a sorting
+key, not a name; `devops` undersold the scope, since only 15 of 43 skills live in `01-devops-core`
+against 8 cloud, 9 security, 5 SRE, 4 platform, 1 FinOps and 1 productivity; and `devops-skills`
+is a crowded namespace of roadmap and interview-prep repositories.
 
 The slug changed in 105 places, but only 15 are authored — the rest are generated by `sync-all.py`
 and `generate-docs.py` from `REPO`, so the rename was one constant plus a regeneration. The display
@@ -401,8 +418,10 @@ title dropped the same word for the same reason: **Cloud & Platform Engineering 
 of "curated" in the generated agent entrypoints were replaced with the claim that is actually
 checkable ("eval-gated"), and the `LICENSE` copyright line was updated.
 
-Deliberately unchanged: the plugin domain names (`04-cloud-aws`, `08-finops-cloud-economics`, …).
-Those are what a user types in `/plugin install`, and the numeric prefix is a useful ordering.
+The plugin domain names lost their numeric prefixes too (`04-cloud-aws` → `cloud-aws`,
+`08-finops-cloud-economics` → `finops-cloud-economics`, …). Those are what a user types in
+`/plugin install`, and the prefix bought nothing: ordering comes from `DOMAIN_TITLES`, not from
+the directory names.
 
 **One breaking change for anyone who already installed it.** GitHub permanently redirects the old
 repository URL, so `git clone` and existing remotes keep working. The Claude Code **marketplace name**
@@ -495,7 +514,7 @@ all already covered here at equal or greater depth.
 ### Verified
 
 - Agent-safety detection self-tested against a planted prompt-injection + exfiltration probe:
-  **4/4 detected, 0 false positives** across all 38 skills.
+  **4/4 detected, 0 false positives** across all 43 skills.
 - Audit self-check: every `uses:` in every workflow is accounted for — no step is silently skipped
   by the YAML-subset parser, and W12 correctly flagged two exceptions that became obsolete once
   `actions/upload-artifact` was SHA-pinned. Both were pruned.
@@ -519,7 +538,9 @@ all already covered here at equal or greater depth.
 - `tessl skill review` scores — Tessl CLI unavailable; the deterministic 8-point check was run as
   the documented fallback.
 - Phase 9 real-world verification: `/plugin marketplace add`, `/plugin install`, `/plugin reload`,
-  live trigger tests, ClawHub publish, and Codex/Gemini/OpenClaw load checks.
+  live trigger tests, ClawHub publish, and Codex/Gemini/OpenClaw load checks. This includes the
+  unprefixed plugin names — no install has been run against `cloud-aws`, `devops-core`, … Every
+  offline gate in `make check` passes.
 - No workflow has been executed on GitHub Actions — CI correctness is verified statically only.
 - The 4 remaining tag-pinned actions need their digests resolved by a maintainer with network
   access before 2026-11-17 (`gh api repos/<owner>/<repo>/git/ref/tags/<tag> --jq .object.sha`).

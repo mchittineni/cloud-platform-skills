@@ -74,7 +74,7 @@ python3 scripts/run-evals.py --skill <name> --verbose
 Two deterministic gates run, with no model and no network:
 
 **1. Routing.** Every skill's `name + title + tags + description` is indexed as a routing document.
-Each prompt is scored tf-idf against all 38 skills. A should-trigger case passes only when its own
+Each prompt is scored tf-idf against all 43 skills. A should-trigger case passes only when its own
 skill ranks #1; a should-not-trigger case passes only when it does not. This reproduces what an
 agent does when choosing a skill — if a description cannot win its own prompts, no runtime will
 route to it.
@@ -191,7 +191,7 @@ degrades the agent it was meant to help. `plugin.json` carries only the strict f
 ## Phase 8 — Deploy
 
 Feature branch → PR to `dev` → merge → PR to `main`. Conventional commits:
-`feat(04-cloud-aws): add aws-network-firewall skill`.
+`feat(cloud-aws): add aws-network-firewall skill`.
 
 Version bumps are mechanical — never hand-edit a manifest:
 

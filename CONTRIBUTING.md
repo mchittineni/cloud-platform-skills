@@ -155,7 +155,7 @@ strict field set: `name`, `description`, `version`, `author`, `homepage`, `repos
 ## Phase 8 — Deploy
 
 Feature branch → PR to `dev` → merge → PR to `main`, conventional commits
-(`feat(04-cloud-aws): add aws-network-firewall skill`).
+(`feat(cloud-aws): add aws-network-firewall skill`).
 
 Version bumps are mechanical — never hand-edit a manifest:
 
