@@ -14,7 +14,7 @@ skills/ is the single source of truth. Everything else in this repository is gen
   <domain>/.claude-plugin/plugin.json + marketplace.json   Plugin/marketplace packaging
 
 Design rule: generated context files carry an INDEX (name, description, path), never full skill
-bodies. Injecting 38 skills into always-on context defeats progressive disclosure and is the
+bodies. Injecting 43 skills into always-on context defeats progressive disclosure and is the
 single most common way a skill library degrades the agent it was meant to help.
 
 Usage:
@@ -39,14 +39,14 @@ AUTHOR = "mchittineni"
 REPO = "https://github.com/mchittineni/cloud-platform-skills"
 
 DOMAIN_TITLES = {
-    "01-devops-core": "DevOps Core Progression",
-    "02-devsecops-and-secops": "DevSecOps & SecOps",
-    "03-sre-slo-sla-observability": "SRE, SLO/SLA & Observability",
-    "04-cloud-aws": "AWS Cloud Architecture",
-    "05-cloud-azure": "Azure Cloud Architecture",
-    "06-cloud-gcp": "GCP Cloud Architecture",
-    "07-platform-engineering": "Platform Engineering",
-    "08-finops-cloud-economics": "FinOps & Cloud Economics",
+    "devops-core": "DevOps Core Progression",
+    "devsecops-and-secops": "DevSecOps & SecOps",
+    "sre-slo-sla-observability": "SRE, SLO/SLA & Observability",
+    "cloud-aws": "AWS Cloud Architecture",
+    "cloud-azure": "Azure Cloud Architecture",
+    "cloud-gcp": "GCP Cloud Architecture",
+    "platform-engineering": "Platform Engineering",
+    "finops-cloud-economics": "FinOps & Cloud Economics",
     "productivity": "Productivity & Meta-Skills",
 }
 
