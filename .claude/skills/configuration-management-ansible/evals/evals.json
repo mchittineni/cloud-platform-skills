@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "configuration-management-ansible",
+  "version": "1.0.0",
+  "must_cover": [
+    "changed_when",
+    "--check",
+    "group_vars",
+    "role",
+    "jinja2"
+  ],
+  "cases": [
+    {
+      "id": "configuration-management-ansible-t1",
+      "prompt": "We need to apply a CIS hardening baseline to 200 Ubuntu hosts repeatably.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Explains the idempotency defect (command/shell without creates/changed_when) rather than only reorganizing code",
+        "Uses role structure with group_vars/host_vars and Jinja2 templates",
+        "Verifies with --check/--diff before applying to the fleet"
+      ]
+    },
+    {
+      "id": "configuration-management-ansible-t2",
+      "prompt": "Our playbook reports 'changed' every run even when nothing changed. Why?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Explains the idempotency defect (command/shell without creates/changed_when) rather than only reorganizing code",
+        "Uses role structure with group_vars/host_vars and Jinja2 templates",
+        "Verifies with --check/--diff before applying to the fleet"
+      ]
+    },
+    {
+      "id": "configuration-management-ansible-t3",
+      "prompt": "How should I split this 900-line playbook into roles?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Explains the idempotency defect (command/shell without creates/changed_when) rather than only reorganizing code",
+        "Uses role structure with group_vars/host_vars and Jinja2 templates",
+        "Verifies with --check/--diff before applying to the fleet"
+      ]
+    },
+    {
+      "id": "configuration-management-ansible-n1",
+      "prompt": "Provision the VPC and subnets themselves as code",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "configuration-management-ansible-n2",
+      "prompt": "Write a safe bash script for our nightly batch job",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

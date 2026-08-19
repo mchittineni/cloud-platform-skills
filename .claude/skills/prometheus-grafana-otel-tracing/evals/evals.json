@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "prometheus-grafana-otel-tracing",
+  "version": "1.0.0",
+  "must_cover": [
+    "receivers",
+    "processors",
+    "exporters",
+    "exemplar",
+    "cardinality",
+    "sampling"
+  ],
+  "cases": [
+    {
+      "id": "prometheus-grafana-otel-tracing-t1",
+      "prompt": "Instrument our services so we can jump from a latency spike to the exact trace.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Configures an OTel Collector pipeline (receivers, processors, exporters) rather than per-language ad hoc exporters",
+        "Correlates metrics, logs and traces via exemplars and trace/span IDs in logs",
+        "Controls cardinality and sampling deliberately with named limits"
+      ]
+    },
+    {
+      "id": "prometheus-grafana-otel-tracing-t2",
+      "prompt": "Our Prometheus is OOMing and we think it's cardinality. How do we find and fix it?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Configures an OTel Collector pipeline (receivers, processors, exporters) rather than per-language ad hoc exporters",
+        "Correlates metrics, logs and traces via exemplars and trace/span IDs in logs",
+        "Controls cardinality and sampling deliberately with named limits"
+      ]
+    },
+    {
+      "id": "prometheus-grafana-otel-tracing-t3",
+      "prompt": "Configure an OpenTelemetry Collector pipeline with tail sampling into Tempo.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Configures an OTel Collector pipeline (receivers, processors, exporters) rather than per-language ad hoc exporters",
+        "Correlates metrics, logs and traces via exemplars and trace/span IDs in logs",
+        "Controls cardinality and sampling deliberately with named limits"
+      ]
+    },
+    {
+      "id": "prometheus-grafana-otel-tracing-n1",
+      "prompt": "What should our SLO and burn-rate alerts be?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "prometheus-grafana-otel-tracing-n2",
+      "prompt": "Give me PromQL alerts for node disk filling up",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

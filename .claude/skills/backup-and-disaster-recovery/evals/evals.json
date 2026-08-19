@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "backup-and-disaster-recovery",
+  "version": "1.0.0",
+  "must_cover": [
+    "RPO",
+    "RTO",
+    "Velero",
+    "immutab",
+    "restore drill"
+  ],
+  "cases": [
+    {
+      "id": "backup-and-disaster-recovery-t1",
+      "prompt": "The business wants 15-minute RPO and 30-minute RTO \u2014 what architecture does that require and what will it cost?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Maps the RPO/RTO targets to a DR tier (backup-restore, pilot light, warm standby, active-active) with cost trade-offs",
+        "Makes backups immutable/versioned with an explicit retention policy",
+        "Requires a tested restore, not just a completed backup job"
+      ]
+    },
+    {
+      "id": "backup-and-disaster-recovery-t2",
+      "prompt": "Set up scheduled Velero backups for our Kubernetes cluster with cross-region copies.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Maps the RPO/RTO targets to a DR tier (backup-restore, pilot light, warm standby, active-active) with cost trade-offs",
+        "Makes backups immutable/versioned with an explicit retention policy",
+        "Requires a tested restore, not just a completed backup job"
+      ]
+    },
+    {
+      "id": "backup-and-disaster-recovery-t3",
+      "prompt": "We have backups but have never restored one. How do I run a DR drill?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Maps the RPO/RTO targets to a DR tier (backup-restore, pilot light, warm standby, active-active) with cost trade-offs",
+        "Makes backups immutable/versioned with an explicit retention policy",
+        "Requires a tested restore, not just a completed backup job"
+      ]
+    },
+    {
+      "id": "backup-and-disaster-recovery-n1",
+      "prompt": "We're in an active outage right now \u2014 how should we coordinate?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "backup-and-disaster-recovery-n2",
+      "prompt": "How do I make our service survive an AZ failure automatically?",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

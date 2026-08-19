@@ -1,0 +1,132 @@
+---
+name: serverless-event-driven-architecture
+description: "Serverless and event-driven architecture: Lambda concurrency, EventBridge routing, SQS standard and FIFO queues with MessageGroupId ordering, Step Functions orchestration, dead-letter queues with redrive, idempotency, and cold-start mitigation. Use when designing event-driven flows, choosing FIFO versus standard for per-customer ordering at high throughput, or when events are lost, duplicated or throttled."
+level: senior
+tags: [serverless, lambda, eventbridge, sqs, step-functions, platform-engineering]
+compatible_runtimes: [antigravity, claude, codex, cursor]
+---
+
+# Serverless & Event-Driven Architecture Patterns
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- An event-driven flow needs routing, ordering, or orchestration designed
+- Failures must be captured with DLQs, retries, and idempotent handlers
+- Cold starts, concurrency limits, or throttling are causing problems
+
+**Route elsewhere when:**
+
+- Long-running containerized services -> `cloud-native-microservices-patterns`
+- Per-invocation cost modelling -> `finops-framework-inform-optimize-operate`
+- Tracing across async hops -> `prometheus-grafana-otel-tracing`
+
+## 1. EventBridge Rule with Dead-Letter Queue (Terraform)
+
+```hcl
+resource "aws_cloudwatch_event_rule" "order_placed" {
+  name        = "order-placed-rule"
+  description = "Routes order.created events to invoice processing lambda"
+
+  event_pattern = jsonencode({
+    "source"      = ["ecommerce.orders"],
+    "detail-type" = ["OrderCreated"]
+  })
+}
+
+resource "aws_cloudwatch_event_target" "lambda_target" {
+  rule      = aws_cloudwatch_event_rule.order_placed.name
+  target_id = "InvoiceProcessingLambda"
+  arn       = aws_lambda_function.invoice_lambda.arn
+
+  dead_letter_config {
+    arn = aws_sqs_queue.eventbridge_dlq.arn
+  }
+
+  retry_policy {
+    maximum_event_age_in_seconds = 3600
+    maximum_retry_attempts       = 5
+  }
+}
+```
+
+---
+
+## 2. Best Practices & Anti-Patterns
+
+- **Do**: Always configure Dead Letter Queues (DLQ) with alarms on every asynchronous invocation to prevent event loss.
+- **Do**: Make event consumers idempotent using unique idempotency keys stored in DynamoDB/Redis.
+- **Don't**: Never use synchronous Lambda-to-Lambda calls for business workflows; orchestrate with AWS Step Functions or EventBridge.
+
+---
+
+## 3. Delivery Guarantees: DLQ Redrive, Idempotency & FIFO Ordering
+
+**Nothing is lost, so nothing may be silently dropped.** Every asynchronous hop needs its own
+failure destination — an EventBridge rule, a Lambda invocation, and an SQS consumer each fail
+differently:
+
+```hcl
+resource "aws_sqs_queue" "orders_dlq" {
+  name                      = "orders-dlq"
+  message_retention_seconds = 1209600          # 14 days: room to fix and redrive
+}
+
+resource "aws_sqs_queue" "orders" {
+  name                       = "orders"
+  visibility_timeout_seconds = 180             # >= 6x the Lambda timeout
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.orders_dlq.arn
+    maxReceiveCount     = 5                    # then park it, do not retry forever
+  })
+}
+
+resource "aws_sqs_queue_redrive_allow_policy" "dlq" {
+  queue_url = aws_sqs_queue.orders_dlq.id
+  redrive_allow_policy = jsonencode({
+    redrivePermission = "byQueue"
+    sourceQueueArns   = [aws_sqs_queue.orders.arn]   # enables DLQ redrive back to source
+  })
+}
+```
+
+Redrive is an operational procedure, not a button: fix the defect, replay a single message,
+verify, then redrive the batch with a bounded rate.
+
+**At-least-once delivery means duplicates are normal.** Every handler must be idempotent, keyed
+on a business identifier rather than the message ID (a retry after a partial write arrives with
+a new one):
+
+```python
+def handler(event, _ctx):
+    for record in event["Records"]:
+        order = json.loads(record["body"])
+        try:
+            table.put_item(
+                Item={"pk": f"ORDER#{order['order_id']}", "state": "PROCESSED"},
+                ConditionExpression="attribute_not_exists(pk)",   # dedupe = the write itself
+            )
+        except ClientError as e:
+            if e.response["Error"]["Code"] == "ConditionalCheckFailedException":
+                continue                                          # already processed
+            raise
+```
+
+Return `batchItemFailures` for partial batch failure so one bad message does not replay the
+whole batch.
+
+**Ordering: FIFO buys per-group order, not global order.** `MessageGroupId` is the ordering and
+concurrency unit — pick the entity whose order matters (`customer_id`, `account_id`), never a
+constant:
+
+| | Standard | FIFO |
+| --- | --- | --- |
+| Order | Best-effort | Strict **per MessageGroupId** |
+| Throughput | Effectively unlimited | 300 msg/s per group (3,000 batched; high-throughput mode raises the ceiling) |
+| Duplicates | Possible | Deduplicated within a 5-minute window |
+| Parallelism | Unbounded | One in-flight batch per group |
+
+A single group serialises the whole queue; `order_id` as the group gives ordering nobody needed
+at maximum cost. Group by the entity, keep handlers idempotent anyway, and use
+`MessageDeduplicationId` for the 5-minute exactly-once window.

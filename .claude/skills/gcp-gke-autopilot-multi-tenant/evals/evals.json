@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "gcp-gke-autopilot-multi-tenant",
+  "version": "1.0.0",
+  "must_cover": [
+    "Autopilot",
+    "NetworkPolicy",
+    "ResourceQuota",
+    "Workload Identity",
+    "namespace"
+  ],
+  "cases": [
+    {
+      "id": "gcp-gke-autopilot-multi-tenant-t1",
+      "prompt": "We need one GKE platform shared by six product teams with hard isolation between them.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Layers tenancy controls: namespaces, RBAC, quotas, NetworkPolicy and node/sandbox isolation where required",
+        "States Autopilot's constraints explicitly and picks Standard when the workload needs them",
+        "Uses Workload Identity binding KSA to GSA instead of key files"
+      ]
+    },
+    {
+      "id": "gcp-gke-autopilot-multi-tenant-t2",
+      "prompt": "Autopilot or Standard for workloads that need DaemonSets and custom kernel settings?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Layers tenancy controls: namespaces, RBAC, quotas, NetworkPolicy and node/sandbox isolation where required",
+        "States Autopilot's constraints explicitly and picks Standard when the workload needs them",
+        "Uses Workload Identity binding KSA to GSA instead of key files"
+      ]
+    },
+    {
+      "id": "gcp-gke-autopilot-multi-tenant-t3",
+      "prompt": "How do GKE pods get access to Cloud Storage without a key file?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Layers tenancy controls: namespaces, RBAC, quotas, NetworkPolicy and node/sandbox isolation where required",
+        "States Autopilot's constraints explicitly and picks Standard when the workload needs them",
+        "Uses Workload Identity binding KSA to GSA instead of key files"
+      ]
+    },
+    {
+      "id": "gcp-gke-autopilot-multi-tenant-n1",
+      "prompt": "Set up the GCP org hierarchy and org policies first",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "gcp-gke-autopilot-multi-tenant-n2",
+      "prompt": "Write the Helm chart for one of these services",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "../../../../templates/eval-schema.json",
+  "skill": "azure-cloud-engineering-patterns",
+  "version": "1.0.0",
+  "must_cover": [
+    "management group",
+    "hub",
+    "Private Endpoint",
+    "Private DNS",
+    "Azure Policy",
+    "RBAC"
+  ],
+  "cases": [
+    {
+      "id": "azure-cloud-engineering-patterns-t1",
+      "prompt": "Design the landing zone: management groups, subscriptions and hub-spoke networking for our Azure estate.",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Structures management groups and subscriptions per Cloud Adoption Framework with hub-spoke or Virtual WAN",
+        "Uses Private Endpoints with correct Private DNS zone linkage (the usual failure point)",
+        "Codifies governance with Azure Policy initiatives and RBAC scoped at the right level"
+      ]
+    },
+    {
+      "id": "azure-cloud-engineering-patterns-t2",
+      "prompt": "Our Storage Account and SQL must not be reachable from the internet. How do I do that properly?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Structures management groups and subscriptions per Cloud Adoption Framework with hub-spoke or Virtual WAN",
+        "Uses Private Endpoints with correct Private DNS zone linkage (the usual failure point)",
+        "Codifies governance with Azure Policy initiatives and RBAC scoped at the right level"
+      ]
+    },
+    {
+      "id": "azure-cloud-engineering-patterns-t3",
+      "prompt": "How do we enforce tagging and allowed regions across every subscription?",
+      "should_trigger": true,
+      "files": [],
+      "assertions": [
+        "Structures management groups and subscriptions per Cloud Adoption Framework with hub-spoke or Virtual WAN",
+        "Uses Private Endpoints with correct Private DNS zone linkage (the usual failure point)",
+        "Codifies governance with Azure Policy initiatives and RBAC scoped at the right level"
+      ]
+    },
+    {
+      "id": "azure-cloud-engineering-patterns-n1",
+      "prompt": "Harden our AKS cluster and its node pools",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": "azure-cloud-engineering-patterns-n2",
+      "prompt": "Audit posture across AWS, Azure and GCP with one tool",
+      "should_trigger": false,
+      "files": [],
+      "assertions": []
+    }
+  ]
+}
