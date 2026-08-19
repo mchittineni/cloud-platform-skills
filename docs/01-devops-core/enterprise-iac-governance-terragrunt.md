@@ -1,0 +1,112 @@
+# Enterprise IaC Architecture & Terragrunt Governance
+
+!!! info "Skill metadata"
+    **Name** `enterprise-iac-governance-terragrunt` · **Level** `staff` · **Tags** `terragrunt` `terraform` `opa` `governance` `devops-core`
+
+    "Enterprise IaC governance: Terragrunt DRY multi-account layouts, generated backends and providers, dependency graphs, and policy-as-code gates with OPA and Conftest. Use when Terraform has been copy-pasted across many accounts or environments, or when non-compliant resources such as unencrypted or untagged S3 buckets must be blocked in CI before apply rather than found afterwards."
+
+    Source: [`skills/01-devops-core/senior-staff-architect/enterprise-iac-governance-terragrunt/SKILL.md`](https://github.com/mchittineni/cloud-platform-skills/blob/main/skills/01-devops-core/senior-staff-architect/enterprise-iac-governance-terragrunt/SKILL.md)
+
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- Terraform has been copy-pasted across accounts/environments and needs DRY structure
+- Infrastructure policy must be enforced in CI before apply (OPA/Conftest/Sentinel)
+- State, backend, and provider configuration must be generated rather than duplicated
+
+**Route elsewhere when:**
+
+- Single-repo module design fundamentals -> `terraform-iac-modules`
+- Runtime posture scanning of deployed resources -> `cloud-security-posture-cspm-cis`
+
+## 1. Multi-Account Terragrunt Architecture
+
+```text
+live/
+├── terragrunt.hcl              # Root configuration (remote state, global tags)
+├── _envcommon/
+│   └── vpc.hcl                 # Reusable module definitions
+├── prod/
+│   ├── account.hcl             # Account-specific variables & role ARNs
+│   └── us-east-1/
+│       └── networking/
+│           └── terragrunt.hcl  # Includes _envcommon/vpc.hcl
+```
+
+### Root Terragrunt Remote State & Provider Injection
+
+```hcl
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    bucket         = "tf-state-${get_aws_account_id()}"
+    key            = "${path_relative_to_include()}/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "tf-locks"
+  }
+}
+```
+
+---
+
+## 2. Policy-as-Code Enforcements (OPA Rego)
+
+Enforce mandatory tagging and encryption across all Terraform plans before applying:
+
+```rego
+package terraform.analysis
+
+default allow = false
+
+# Rule: S3 Buckets must have server-side encryption enabled
+deny[msg] {
+    resource := input.resource_changes[_]
+    resource.type == "aws_s3_bucket"
+    not resource.change.after.server_side_encryption_configuration
+    msg := sprintf("S3 Bucket '%v' must specify server_side_encryption_configuration", [resource.address])
+}
+
+allow {
+    count(deny) == 0
+}
+```
+
+---
+
+## 3. Governance Gate in CI (Conftest)
+
+```yaml
+- name: Terragrunt plan to JSON
+  run: |
+    terragrunt run-all plan -out=tfplan.binary --terragrunt-non-interactive
+    terragrunt run-all show -json tfplan.binary > tfplan.json
+- name: Enforce policy
+  run: conftest test --policy policy/ --all-namespaces tfplan.json
+```
+
+Gate on the plan JSON, never on HCL source: only the plan reveals the resolved,
+post-variable, post-module values an apply will actually create.
+
+## 4. Best Practices & Anti-Patterns
+
+| Do | Don't |
+| --- | --- |
+| Pin `terraform_version` and module `source` refs to immutable tags/SHAs | Track `main` or float provider versions across accounts |
+| Keep one state file per account/region/component (blast-radius sizing) | Keep a monolithic state for the whole organization |
+| Generate `backend.tf` / `provider.tf` via Terragrunt `generate` blocks | Copy backend and provider stanzas into every leaf module |
+| Express cross-stack wiring with `dependency` blocks and outputs | Hardcode ARNs, VPC IDs, or account numbers between stacks |
+| Fail the pipeline on policy `deny` before `apply` | Detect violations only after resources exist |
+| Assume a per-account role via OIDC at plan/apply time | Share one long-lived admin credential across environments |
+
+### Anti-patterns that reliably cause outages
+
+- `run-all apply` across production without a reviewed, artifact-pinned plan.
+- Policy exceptions granted in code comments instead of an expiring, owned waiver file.
+- Terragrunt used purely as a `terraform` wrapper while duplication stays in leaf modules.
