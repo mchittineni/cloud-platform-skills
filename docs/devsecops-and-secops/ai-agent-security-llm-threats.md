@@ -1,0 +1,175 @@
+# AI and Agent Security: Prompt Injection, Excessive Agency, and Tool Containment
+
+!!! info "Skill metadata"
+    **Name** `ai-agent-security-llm-threats` · **Level** `senior` · **Tags** `ai-security` `llm` `prompt-injection` `agent-security` `owasp` `mitre-atlas` `devsecops`
+
+    "Security for LLM and agent systems: direct and indirect prompt injection, the OWASP Top 10 for LLM Applications, MITRE ATLAS technique mapping, excessive agency and tool-scope containment, egress allowlisting to stop data exfiltration, human confirmation for irreversible actions, and treating third-party skills and MCP servers as untrusted code. Use when an agent is given tools or credentials, when retrieved documents or repository files could carry injected instructions, or when reviewing an AI feature before it reaches production."
+
+    Source: [`skills/devsecops-and-secops/ai-agent-security-llm-threats/SKILL.md`](https://github.com/mchittineni/cloud-platform-skills/blob/main/skills/devsecops-and-secops/ai-agent-security-llm-threats/SKILL.md)
+
+
+## When to Use This Skill
+
+**Triggers — load this skill when:**
+
+- An agent is being given tools, credentials, or write access to real systems
+- Content the model reads — retrieved documents, issues, web pages, skill files — is untrusted
+- An AI feature needs a security review before production
+- A third-party skill, plugin, or MCP server is being adopted
+- Model or agent output flows into a shell, SQL query, browser, or another system
+
+**Route elsewhere when:**
+
+- Scanning application code and dependencies -> `shift-left-security-sast-sca`
+- Verifying the provenance of a model or container artifact -> `supply-chain-security-slsa-sigstore`
+- Enforcing cluster-level guardrails on the workload -> `policy-as-code-opa-kyverno`
+- Handling a confirmed compromise or leaked credential -> `secops-incident-triage-forensics`
+- Scoping the IAM role the agent assumes -> `aws-iam-zero-trust-policies`
+
+## 1. The threat model is inverted: instructions are the attack surface
+
+A conventional service processes data. An agent processes **instructions that arrive as data** and
+then acts with the operator’s credentials. Prompt injection is not a bug to be patched — it is a
+consequence of that design, so the controls are containment controls, not filters.
+
+Two forms, with very different exposure:
+
+| Form | Delivery | Why it is worse or better |
+| --- | --- | --- |
+| Direct | The user types it | Bounded: the user already has their own privileges |
+| **Indirect** | A retrieved page, ticket comment, code comment, PDF, skill file, or MCP tool description | The attacker is not the user, needs no account, and the payload arrives inside content the operator trusts |
+
+Indirect injection is where real incidents come from. Assume any content the model reads may contain
+instructions, and design so that acting on them is survivable.
+
+## 2. OWASP Top 10 for LLM Applications — the control for each
+
+| ID | Risk | Control that actually helps |
+| --- | --- | --- |
+| LLM01 | Prompt injection | Least-privilege tools, human confirmation on irreversible actions, egress allowlist |
+| LLM02 | Sensitive information disclosure | Keep secret material out of context; supply it at call time, never in the prompt |
+| LLM03 | Supply chain | Pin and verify models, skills, and MCP servers; review before adoption |
+| LLM04 | Data and model poisoning | Provenance on training and RAG corpora; signed, versioned index builds |
+| LLM05 | Improper output handling | Treat output as untrusted input: parameterise, escape, never evaluate it |
+| LLM06 | Excessive agency | Scope each tool to one capability; no broad execute-anything tool |
+| LLM07 | System prompt leakage | Put nothing confidential in the system prompt; assume it is public |
+| LLM08 | Vector and embedding weaknesses | Per-tenant index isolation; authorise retrieval, not just the query |
+| LLM09 | Misinformation | Ground answers in citations; require abstention paths |
+| LLM10 | Unbounded consumption | Per-identity rate and token budgets, tool-call ceilings, hard timeouts |
+
+Map findings to **MITRE ATLAS** for reporting alongside conventional detections, so AI risk lands in
+the same register as everything else rather than in a separate document nobody reads.
+
+## 3. Contain agency: the only control that survives a successful injection
+
+Filtering prompts is defence in depth at best. Assume the injection succeeds, then ask what it can
+reach.
+
+```yaml
+# Tool scope: one capability per tool, narrowest possible parameters
+tools:
+  - name: read_ticket
+    scope: "jira:issue:read"
+    allow: ["PROJ-*"] # not every project
+  - name: post_comment
+    scope: "jira:comment:write"
+    rate_limit: "10/hour"
+  # NOT a tool: run_shell, execute_sql, fetch_arbitrary_url — each is a universal
+  # capability that converts any injection into arbitrary action.
+
+confirmation_required: # irreversible or outward-facing: a human approves, every time
+  - delete_*
+  - send_email
+  - post_to_slack
+  - merge_pull_request
+  - deploy_*
+
+egress:
+  # Exfiltration needs a channel. Remove the channel.
+  default: deny
+  allow: ["api.internal.example.com", "api.anthropic.com"]
+
+budgets:
+  max_tool_calls_per_task: 40
+  max_tokens_per_identity_per_day: 2_000_000
+  wall_clock_timeout: 300s
+```
+
+Three properties do the real work:
+
+1. **No universal tool.** A run-anything or fetch-any-URL tool collapses every injection into full
+   compromise. Ten narrow tools are safer than one flexible one.
+2. **Egress allowlist.** Injected instructions telling the agent to send environment variables to an
+   attacker-controlled host fail at the network, regardless of what the model decided.
+3. **Short-lived, scoped credentials.** OIDC federation with a role scoped to the agent’s task, so a
+   successful injection inherits minutes of narrow access rather than a static key.
+
+## 4. Output is untrusted input
+
+```python
+# WRONG — the model’s string is interpolated into a command line that a shell will parse,
+# so any injected shell metacharacter becomes execution.
+run_via_shell(f"kubectl scale deploy/{model_output} --replicas=3")
+
+# CORRECT — validate against an allowlist, then exec argv directly; no shell parses anything.
+if model_output not in ALLOWED_DEPLOYMENTS:
+    raise ValueError(f"deployment not permitted: {model_output!r}")
+subprocess.run(["kubectl", "scale", f"deploy/{model_output}", "--replicas=3"], check=True)
+```
+
+The same rule applies to SQL (parameterise), HTML (escape — model output rendered raw is stored XSS),
+and file paths (resolve and confirm containment under the intended root). “The model produced it” is
+not a trust boundary.
+
+## 5. Third-party skills, plugins, and MCP servers are untrusted code
+
+An agent skill is a set of instructions your agent will execute with your credentials. Review one the
+way you would review a dependency that ships with shell access, because that is what it is.
+
+<!-- agent-safety-justified: this skill teaches detection of agent-directed harm, so it must name the attack shapes a reviewer looks for (redirection, concealment, confirmation bypass, exfiltration). Every mention sits in a review checklist or a Do-not list: the reader is told to REJECT these patterns, never to perform them. -->
+
+**Review checklist before adopting:**
+
+- [ ] No instruction that redirects the agent away from the operator’s intent, overrides earlier
+      instructions, or tells it to conceal what it is doing
+- [ ] No exfiltration shape — reading credential files or environment variables and sending them
+      anywhere, including encode-then-upload
+- [ ] No unguarded destructive command presented as routine
+- [ ] No confirmation bypass — forced flags, auto-yes, or “skip the approval step”
+- [ ] Tool and permission requests are proportionate to the stated purpose
+- [ ] Pinned to a commit, not a moving branch, and re-reviewed on upgrade
+- [ ] MCP tool _descriptions_ reviewed too: the description is model-visible text and is an injection
+      vector in itself
+
+Automate the mechanical half. The compliance gate at the root of this repository (`compliance-check`)
+scans every skill for agent-directed harm and exfiltration patterns and treats any hit as a blocker —
+worth copying into any pipeline that ingests third-party agent content.
+
+## 6. Best practices and anti-patterns
+
+**Do:**
+
+- **Threat-model the tools, not the prompt.** The blast radius is the union of what the tools reach.
+- **Log every tool call with its arguments and the human decision** on confirmations. Without a tool
+  audit trail, an AI incident cannot be reconstructed.
+- **Isolate per tenant end to end** — including the vector index. Shared embeddings leak across
+  customers even when the application layer is correct.
+- **Red-team with injected content**, not just adversarial prompts: plant a payload in a ticket, a
+  README, a retrieved page, and confirm containment held.
+- **Fail closed.** If a guardrail or classifier is unavailable, refuse rather than proceed unchecked.
+- **Give the model an abstention path**, so “I don’t know” is available and fabrication is not the
+  only way to satisfy the request.
+
+**Do not:**
+
+- **Rely on the system prompt as a security control.** An instruction not to reveal something is a
+  request, not a boundary; the model has no privileged execution mode.
+- **Put secret material in context.** Anything in the prompt is one injection away from being echoed.
+  Supply credentials at call time, outside the model’s view.
+- **Ship a universal shell or arbitrary-URL tool.** It converts every injection into arbitrary
+  execution and cannot be made safe by prompting.
+- **Trust a blocklist of injection phrases.** Known phrasings are trivially paraphrased; containment
+  is what holds.
+- **Let an agent approve its own irreversible actions**, including its own confirmation prompts.
+- **Treat an AI incident as a separate discipline.** Route it through the same on-call, severity, and
+  post-mortem process as any other production security event.
