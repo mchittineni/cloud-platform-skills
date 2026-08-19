@@ -1,0 +1,40 @@
+# Prettier owns machine-readable configuration in this repository — JSON, JSONC and YAML.
+# It does NOT own markdown: see .markdownlint-cli2.jsonc for why reflowing skill prose can break
+# the `must_cover` content-coverage gate. markdownlint is the authority for *.md.
+
+# ---- markdown: owned by markdownlint, never by prettier ----
+*.md
+*.mdc
+
+# ---- generated trees: regenerate with scripts/sync-all.py and scripts/generate-docs.py ----
+.claude/skills/
+.agents/skills/
+.agents/rules/
+.cursor/rules/
+docs/
+site/
+mkdocs.yml
+
+# ---- generated JSON: byte-compared by `sync-all.py --check`; reformatting breaks the gate ----
+.claude-plugin/marketplace.json
+skills/*/.claude-plugin/plugin.json
+skills/**/evals/evals.json
+
+# ---- generated gate reports ----
+benchmark.json
+compliance.json
+workflow-audit.json
+skills-manifest.json
+*.sarif
+
+# ---- not ours ----
+node_modules/
+.venv/
+__pycache__/
+LICENSE
+
+# npm-generated lockfile: npm owns its formatting
+package-lock.json
+
+# Repo-local lint toolchain venv (see the Makefile's .venv-lint target).
+.venv-lint/
