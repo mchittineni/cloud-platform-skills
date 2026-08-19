@@ -1,6 +1,6 @@
 # Marketplace listing — cloud-platform-skills
 
-> 38 evaluated, compliance-gated engineering skills for Cloud, Platform, SRE, Security and FinOps.
+> 43 evaluated, compliance-gated engineering skills for Cloud, Platform, SRE, Security and FinOps.
 > Portable across Claude Code, Antigravity/Gemini CLI, Codex, Cursor and GitHub Copilot.
 
 ## Install
@@ -9,7 +9,7 @@
 
 ```text
 /plugin marketplace add mchittineni/cloud-platform-skills
-/plugin install 04-cloud-aws@cloud-platform-skills
+/plugin install cloud-aws@cloud-platform-skills
 /plugin list
 ```
 
@@ -18,14 +18,14 @@ carry the FinOps or Azure catalogue in context.
 
 | Plugin | Skills | Covers |
 | --- | --- | --- |
-| `01-devops-core` | 15 | Linux, Git, Docker, CI/CD, Terraform, Helm, GitOps, progressive delivery, DR, DORA, load testing |
-| `02-devsecops-and-secops` | 5 | SAST/SCA/SBOM, Vault & KMS, Falco runtime detection, CSPM/CIS, incident forensics |
-| `03-sre-slo-sla-observability` | 4 | SLI/SLO/error budgets, OpenTelemetry, host monitoring, incident command |
-| `04-cloud-aws` | 4 | EKS, IAM zero-trust, migration 6Rs, scalability & HA |
-| `05-cloud-azure` | 2 | AKS landing zones, CAF platform architecture |
-| `06-cloud-gcp` | 2 | Org hierarchy & keyless CI, GKE multi-tenancy |
-| `07-platform-engineering` | 4 | Service mesh, 12-factor services, Backstage IDP, serverless/event-driven |
-| `08-finops-cloud-economics` | 1 | FinOps lifecycle, allocation, commitments, unit economics |
+| `devops-core` | 15 | Linux, Git, Docker, CI/CD, Terraform, Helm, GitOps, progressive delivery, DR, DORA, load testing |
+| `devsecops-and-secops` | 9 | SAST/SCA/SBOM, Vault & KMS, Falco runtime detection, CSPM/CIS, incident forensics, AI/LLM agent security, detection engineering, policy-as-code, SLSA supply chain |
+| `sre-slo-sla-observability` | 5 | SLI/SLO/error budgets, OpenTelemetry, host monitoring, incident command, chaos engineering |
+| `cloud-aws` | 4 | EKS, IAM zero-trust, migration 6Rs, scalability & HA |
+| `cloud-azure` | 2 | AKS landing zones, CAF platform architecture |
+| `cloud-gcp` | 2 | Org hierarchy & keyless CI, GKE multi-tenancy |
+| `platform-engineering` | 4 | Service mesh, 12-factor services, Backstage IDP, serverless/event-driven |
+| `finops-cloud-economics` | 1 | FinOps lifecycle, allocation, commitments, unit economics |
 | `productivity` | 1 | Skill authoring meta-skill |
 
 ### Other runtimes

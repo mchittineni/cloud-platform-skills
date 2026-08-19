@@ -28,20 +28,20 @@ carry the FinOps or Azure catalogue in context.
 
 ```text
 /plugin marketplace add mchittineni/cloud-platform-skills
-/plugin install 04-cloud-aws@cloud-platform-skills
+/plugin install cloud-aws@cloud-platform-skills
 /plugin list
 ```
 
 | Plugin | Skills |
 | --- | --- |
-| `01-devops-core` | 15 |
-| `02-devsecops-and-secops` | 5 |
-| `03-sre-slo-sla-observability` | 4 |
-| `04-cloud-aws` | 4 |
-| `05-cloud-azure` | 2 |
-| `06-cloud-gcp` | 2 |
-| `07-platform-engineering` | 4 |
-| `08-finops-cloud-economics` | 1 |
+| `devops-core` | 15 |
+| `devsecops-and-secops` | 9 |
+| `sre-slo-sla-observability` | 5 |
+| `cloud-aws` | 4 |
+| `cloud-azure` | 2 |
+| `cloud-gcp` | 2 |
+| `platform-engineering` | 4 |
+| `finops-cloud-economics` | 1 |
 | `productivity` | 1 |
 
 After changing a skill locally, reload without restarting the session:
