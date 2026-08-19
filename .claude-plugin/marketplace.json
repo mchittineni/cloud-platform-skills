@@ -6,43 +6,43 @@
   },
   "plugins": [
     {
-      "name": "01-devops-core",
-      "source": "./skills/01-devops-core",
+      "name": "devops-core",
+      "source": "./skills/devops-core",
       "description": "DevOps Core Progression: 15 production-grade skills (backup-and-disaster-recovery, cicd-pipeline-design, configuration-management-ansible...)"
     },
     {
-      "name": "02-devsecops-and-secops",
-      "source": "./skills/02-devsecops-and-secops",
+      "name": "devsecops-and-secops",
+      "source": "./skills/devsecops-and-secops",
       "description": "DevSecOps & SecOps: 9 production-grade skills (ai-agent-security-llm-threats, cloud-security-posture-cspm-cis, container-runtime-security-falco...)"
     },
     {
-      "name": "03-sre-slo-sla-observability",
-      "source": "./skills/03-sre-slo-sla-observability",
+      "name": "sre-slo-sla-observability",
+      "source": "./skills/sre-slo-sla-observability",
       "description": "SRE, SLO/SLA & Observability: 5 production-grade skills (chaos-engineering-resilience-testing, incident-management-and-postmortem, infrastructure-host-monitoring...)"
     },
     {
-      "name": "04-cloud-aws",
-      "source": "./skills/04-cloud-aws",
+      "name": "cloud-aws",
+      "source": "./skills/cloud-aws",
       "description": "AWS Cloud Architecture: 4 production-grade skills (aws-cloud-migration-strategies, aws-eks-enterprise-patterns, aws-iam-zero-trust-policies...)"
     },
     {
-      "name": "05-cloud-azure",
-      "source": "./skills/05-cloud-azure",
+      "name": "cloud-azure",
+      "source": "./skills/cloud-azure",
       "description": "Azure Cloud Architecture: 2 production-grade skills (azure-aks-enterprise-landing-zones, azure-cloud-engineering-patterns)"
     },
     {
-      "name": "06-cloud-gcp",
-      "source": "./skills/06-cloud-gcp",
+      "name": "cloud-gcp",
+      "source": "./skills/cloud-gcp",
       "description": "GCP Cloud Architecture: 2 production-grade skills (gcp-cloud-engineering-patterns, gcp-gke-autopilot-multi-tenant)"
     },
     {
-      "name": "07-platform-engineering",
-      "source": "./skills/07-platform-engineering",
+      "name": "platform-engineering",
+      "source": "./skills/platform-engineering",
       "description": "Platform Engineering: 4 production-grade skills (api-gateway-service-mesh, cloud-native-microservices-patterns, internal-developer-portal-backstage...)"
     },
     {
-      "name": "08-finops-cloud-economics",
-      "source": "./skills/08-finops-cloud-economics",
+      "name": "finops-cloud-economics",
+      "source": "./skills/finops-cloud-economics",
       "description": "FinOps & Cloud Economics: 1 production-grade skills (finops-framework-inform-optimize-operate)"
     },
     {
