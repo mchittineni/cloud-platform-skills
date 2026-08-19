@@ -70,6 +70,10 @@ jobs:
           GITLEAKS_CONFIG: .gitleaks.toml
           GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
           GITLEAKS_ENABLE_SUMMARY: "true"
+          # PR comments need `pull-requests: write`. Granting a third-party action write access to
+          # pull requests to obtain a comment is a bad trade: the findings are already in the job
+          # summary and the step's exit code. Keep the token read-only.
+          GITLEAKS_ENABLE_COMMENTS: "false"
 
   codeql:
     name: CodeQL (python)
@@ -97,7 +101,10 @@ jobs:
 
   dependency-review:
     name: Dependency review
-    if: github.event_name == 'pull_request'
+    # Requires the dependency graph, which needs GitHub Advanced Security on a private repository.
+    # The action hard-fails instead of skipping when it is unavailable, so gate on visibility —
+    # this job starts running by itself once the repository is public.
+    if: github.event_name == 'pull_request' && github.event.repository.visibility == 'public'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
