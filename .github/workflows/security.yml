@@ -55,6 +55,13 @@ jobs:
     name: Secret scan (gitleaks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      # On a pull_request the action queries the pulls API to work out which commits to scan, so the
+      # workflow-level `contents: read` alone makes it crash with "Resource not accessible by
+      # integration". This is the read scope it needs — deliberately not `pull-requests: write`,
+      # which it would only use to post a comment (disabled below).
+      pull-requests: read
 
     steps:
       - name: Checkout Repository
