@@ -1,0 +1,216 @@
+name: Auto Release
+
+# Two mutually exclusive paths, both driven by a push to main:
+#
+#   manifests have a version with no tag  -> publish it (the release PR just merged)
+#   otherwise, commits warrant a bump     -> open/refresh the release PR
+#
+# main requires pull requests, so the bump cannot be pushed straight to it; it travels
+# through a PR and the merge of that PR is what publishes.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - ".github/**"
+      - "mkdocs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: auto-release
+  cancel-in-progress: false
+
+jobs:
+  decide:
+    name: Decide release action
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      action: ${{ steps.plan.outputs.action }}
+      version: ${{ steps.plan.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+
+      - name: Plan
+        id: plan
+        run: |
+          set -euo pipefail
+          current="$(python3 scripts/next-version.py --current)"
+          next="$(python3 scripts/next-version.py --next)"
+
+          if ! git rev-parse -q --verify "refs/tags/v${current}" >/dev/null; then
+            echo "manifests are at ${current} with no tag -> publish"
+            echo "action=publish" >> "$GITHUB_OUTPUT"
+            echo "version=${current}" >> "$GITHUB_OUTPUT"
+          elif [ "$next" != "none" ]; then
+            echo "commits since v${current} warrant ${next} -> prepare release PR"
+            echo "action=prepare" >> "$GITHUB_OUTPUT"
+            echo "version=${next}" >> "$GITHUB_OUTPUT"
+          else
+            echo "no releasable commits since v${current} -> nothing to do"
+            echo "action=none" >> "$GITHUB_OUTPUT"
+          fi
+
+  prepare:
+    name: Prepare release PR
+    needs: decide
+    if: needs.decide.outputs.action == 'prepare'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      VERSION: ${{ needs.decide.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+
+      - name: Bump manifests and regenerate
+        run: |
+          set -euo pipefail
+          test -n "$VERSION" || { echo "::error::empty VERSION"; exit 1; }
+          python3 scripts/check-release.py --bump "$VERSION"
+          # sync-all.py stamps this constant into every regenerated manifest.
+          python3 - "$VERSION" <<'PY'
+          import re, sys
+          from pathlib import Path
+          p = Path("scripts/sync-all.py")
+          s = p.read_text(encoding="utf-8")
+          s2 = re.sub(r'^VERSION = "\d+\.\d+\.\d+"$', f'VERSION = "{sys.argv[1]}"', s, count=1, flags=re.M)
+          assert s2 != s, "VERSION constant not found in scripts/sync-all.py"
+          p.write_text(s2, encoding="utf-8")
+          PY
+          python3 scripts/sync-all.py
+          python3 scripts/generate-docs.py
+
+      - name: Insert CHANGELOG section
+        run: |
+          set -euo pipefail
+          python3 scripts/next-version.py --notes "$VERSION" > /tmp/section.md
+          python3 - "$VERSION" <<'PY'
+          import sys
+          from pathlib import Path
+          version = sys.argv[1]
+          p = Path("CHANGELOG.md")
+          text = p.read_text(encoding="utf-8")
+          if f"## [{version}]" in text:
+              sys.exit(0)
+          section = Path("/tmp/section.md").read_text(encoding="utf-8")
+          marker = "\n## ["
+          i = text.index(marker) + 1
+          p.write_text(text[:i] + section + "\n" + text[i:], encoding="utf-8")
+          PY
+
+      - name: All quality gates
+        run: |
+          python3 scripts/validate-skills.py --check-sync --strict
+          python3 scripts/run-evals.py --min-pass-rate 95
+          python3 scripts/compliance-check.py
+          python3 scripts/audit-workflows.py
+          python3 scripts/sync-all.py --check
+          python3 scripts/generate-docs.py --check
+          python3 scripts/check-release.py --version "$VERSION"
+
+      - name: Open or refresh release PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          branch="release/v${VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$branch"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nothing to commit; release PR already up to date"
+            exit 0
+          fi
+          git commit -m "chore(release): ${VERSION}"
+          git push --force-with-lease origin "$branch"
+          if [ -z "$(gh pr list --head "$branch" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --base main --head "$branch" \
+              --title "chore(release): ${VERSION}" \
+              --body "Automated release preparation for **${VERSION}**, derived from Conventional Commits since the last tag.
+
+          Bumps the 9 domain manifests and \`scripts/sync-all.py\`, regenerates mirrors and docs, and adds the CHANGELOG section. All quality gates ran green on this branch.
+
+          Merging this PR publishes tag \`v${VERSION}\` and the GitHub release."
+          fi
+
+  publish:
+    name: Publish release
+    needs: decide
+    if: needs.decide.outputs.action == 'publish'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.decide.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+
+      - name: All quality gates
+        run: |
+          python3 scripts/validate-skills.py --check-sync --strict
+          python3 scripts/run-evals.py --min-pass-rate 95 --out benchmark.json
+          python3 scripts/compliance-check.py --out compliance.json
+          python3 scripts/audit-workflows.py --out workflow-audit.json
+          python3 scripts/sync-all.py --check
+          python3 scripts/generate-docs.py --check
+          python3 scripts/check-release.py --version "$VERSION"
+          python3 scripts/check-release.py --manifest skills-manifest.json
+
+      - name: Tag and publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 scripts/check-release.py --notes "$VERSION" --out release-notes.md
+          gh release create "v${VERSION}" \
+            --target "$GITHUB_SHA" \
+            --title "v${VERSION}" \
+            --notes-file release-notes.md
+
+      - name: Upload release evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-evidence-${{ env.VERSION }}
+          path: |
+            benchmark.json
+            compliance.json
+            workflow-audit.json
+            skills-manifest.json
+          retention-days: 90
+          if-no-files-found: error
