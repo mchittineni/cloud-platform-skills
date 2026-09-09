@@ -2,6 +2,20 @@
 
 All notable changes to this repository. Versioning follows `CONTRIBUTING.md`.
 
+## [1.1.0] - 2026-09-09
+
+### Added
+
+- **release**: auto-release on push to main from conventional commits
+
+### Fixed
+
+- **devsecops**: replace archived semgrep action, pin trivy and bump CI actions
+- **devops-core**: bump CI action pins and pin trivy-action off master
+- **cloud-gcp**: bump google-github-actions/auth to v3
+- **release**: resolve version from ref_type, not branch name
+- **workflow**: updated release version resolution to use correct ref_name
+
 ## [1.0.0] - 2026-08-19
 
 First released version. Everything below describes the state of the library at 1.0.0 relative to

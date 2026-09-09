@@ -1,7 +1,7 @@
 {
   "name": "platform-engineering",
   "description": "Platform Engineering: 4 production-grade skills (api-gateway-service-mesh, cloud-native-microservices-patterns, internal-developer-portal-backstage...)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "mchittineni",
   "homepage": "https://github.com/mchittineni/cloud-platform-skills",
   "repository": "https://github.com/mchittineni/cloud-platform-skills",

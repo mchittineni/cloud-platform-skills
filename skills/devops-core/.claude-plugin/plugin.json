@@ -1,7 +1,7 @@
 {
   "name": "devops-core",
   "description": "DevOps Core Progression: 15 production-grade skills (backup-and-disaster-recovery, cicd-pipeline-design, configuration-management-ansible...)",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "mchittineni",
   "homepage": "https://github.com/mchittineni/cloud-platform-skills",
   "repository": "https://github.com/mchittineni/cloud-platform-skills",

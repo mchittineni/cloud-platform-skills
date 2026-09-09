@@ -34,7 +34,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 AUTHOR = "mchittineni"
 REPO = "https://github.com/mchittineni/cloud-platform-skills"
 
