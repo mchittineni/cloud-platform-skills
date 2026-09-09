@@ -1,13 +1,5 @@
 name: Auto Release
 
-# Two mutually exclusive paths, both driven by a push to main:
-#
-#   manifests have a version with no tag  -> publish it (the release PR just merged)
-#   otherwise, commits warrant a bump     -> open/refresh the release PR
-#
-# main requires pull requests, so the bump cannot be pushed straight to it; it travels
-# through a PR and the merge of that PR is what publishes.
-
 on:
   push:
     branches: [main]
@@ -33,6 +25,7 @@ jobs:
     outputs:
       action: ${{ steps.plan.outputs.action }}
       version: ${{ steps.plan.outputs.version }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -76,6 +69,7 @@ jobs:
       pull-requests: write
     env:
       VERSION: ${{ needs.decide.outputs.version }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -169,6 +163,7 @@ jobs:
       contents: write
     env:
       VERSION: ${{ needs.decide.outputs.version }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
