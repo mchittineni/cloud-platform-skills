@@ -41,16 +41,16 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Build and push by digest
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
 
-      - uses: sigstore/cosign-installer@v3
+      - uses: sigstore/cosign-installer@v4
 
       # Sign the DIGEST, never the tag. A tag is a mutable pointer: signing
       # `:v1.4.0` signs whatever that tag meant at signing time, and an attacker
@@ -62,7 +62,7 @@ jobs:
 
       # SLSA provenance: what built this, from which source, with which inputs.
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-name: ghcr.io/${{ github.repository }}
           subject-digest: ${{ steps.build.outputs.digest }}
