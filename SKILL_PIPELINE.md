@@ -195,16 +195,17 @@ Feature branch → PR to `dev` → merge → PR to `main`. Conventional commits:
 
 Version bumps are mechanical — never hand-edit a manifest:
 
-```bash
-python3 scripts/check-release.py --bump 1.0.1     # every domain plugin.json
-# update VERSION in scripts/sync-all.py to match
-python3 scripts/sync-all.py
-python3 scripts/check-release.py --version 1.0.1  # tag == manifests == marketplace == CHANGELOG
-```
+Releases are automatic. Merging to `main` triggers `.github/workflows/auto-release.yml`, which
+derives the next version from the Conventional Commit subjects since the last tag, then opens a
+`chore(release): X.Y.Z` pull request that bumps every domain manifest and the `VERSION` constant in
+`scripts/sync-all.py`, regenerates the mirrors and docs, and adds the CHANGELOG section.
 
-Tagging `v1.0.1` triggers `.github/workflows/release.yml`: re-runs every gate, uploads a 90-day
-release-evidence artifact (benchmark, compliance, workflow audit, and a skill manifest with
-per-skill sha256), and publishes the release from the CHANGELOG section.
+Merging that pull request publishes: every gate re-runs, a 90-day release-evidence artifact is
+uploaded (benchmark, compliance, workflow audit, and a skill manifest with per-skill sha256), and
+the tag and GitHub release are created from the CHANGELOG section.
+
+Bumping by hand is therefore never necessary. `scripts/check-release.py --bump` remains available
+for recovery, but the pipeline calls it for you.
 
 | Change | Bump |
 | --- | --- |

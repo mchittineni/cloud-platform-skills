@@ -157,18 +157,29 @@ strict field set: `name`, `description`, `version`, `author`, `homepage`, `repos
 Feature branch → PR to `dev` → merge → PR to `main`, conventional commits
 (`feat(cloud-aws): add aws-network-firewall skill`).
 
-Version bumps are mechanical — never hand-edit a manifest:
+Version bumps are automatic — never hand-edit a manifest, and never pick a version yourself.
+The commit subject decides the bump, so write it accordingly:
+
+| Commit type | Bump |
+| --- | --- |
+| `type!:` or `BREAKING CHANGE:` in the body | major |
+| `feat` | minor |
+| `fix`, `perf` | patch |
+| `chore`, `docs`, `ci`, `refactor`, `test` | no release |
+
+Merging to `main` triggers `.github/workflows/auto-release.yml`, which opens a
+`chore(release): X.Y.Z` pull request bumping every domain manifest and the `VERSION` constant in
+`scripts/sync-all.py`, regenerating the mirrors and docs, and adding the CHANGELOG section.
+Merging that pull request re-runs every gate, uploads a 90-day release-evidence artifact
+(benchmark, compliance, workflow audit, skill manifest with per-skill sha256), and publishes the
+tag and GitHub release from the CHANGELOG section.
+
+Preview what the next release would be at any time:
 
 ```bash
-python3 scripts/check-release.py --bump 1.0.1   # every domain plugin.json
-# update VERSION in scripts/sync-all.py to match, then:
-python3 scripts/sync-all.py
-python3 scripts/check-release.py --version 1.0.1   # tag == manifests == CHANGELOG
+python3 scripts/next-version.py --next        # e.g. 1.1.0, or "none"
+python3 scripts/next-version.py --notes 1.1.0 # the CHANGELOG section it would write
 ```
-
-Tagging `v1.0.1` triggers `.github/workflows/release.yml`, which re-runs every gate, uploads a
-90-day release-evidence artifact (benchmark, compliance, workflow audit, skill manifest with
-per-skill sha256), and publishes the GitHub release from the CHANGELOG section.
 
 ## Phase 9 — Real-world verification (never skip)
 

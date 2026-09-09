@@ -169,7 +169,7 @@ python3 scripts/check-release.py --version X.Y.Z           # release consistency
 | Linters (`make lint`) | markdownlint 0 issues, prettier clean, ruff clean |
 
 All gates are stdlib-only Python 3.10+, run offline, need no model or API key, and are enforced in CI
-(`.github/workflows/skills-ci.yml`, `security.yml`, `release.yml`). Install them locally as
+(`.github/workflows/skills-ci.yml`, `security.yml`, `auto-release.yml`). Install them locally as
 pre-commit hooks with `make hooks`. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full production
 pipeline and [CHANGELOG.md](CHANGELOG.md) for what has shipped.
 
