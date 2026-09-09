@@ -35,38 +35,39 @@ jobs:
     name: Semgrep SAST & Gitleaks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with: { fetch-depth: 0 }
         
       # Secrets Detection
       - name: Gitleaks Scan
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Static Analysis (SAST)
+      # The semgrep-action wrapper is deprecated and archived. The supported
+      # path is the semgrep/semgrep image running `semgrep ci`; SEMGREP_RULES
+      # selects registry rulesets without requiring a platform token.
       - name: Semgrep SAST Scan
-        uses: returntocorp/semgrep-action@v1
-        with:
-          config: >-
-            p/security-audit
-            p/secrets
-            p/owasp-top-ten
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src \
+            -e SEMGREP_RULES="p/security-audit p/secrets p/owasp-top-ten" \
+            semgrep/semgrep:1.176.1 semgrep ci
 
   sca-and-sbom:
     name: Trivy SCA & SBOM Generation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Generate CycloneDX SBOM
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: 'fs'
           format: 'cyclonedx'
           output: 'sbom.cdx.json'
       
       - name: Scan Filesystem for CVEs
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: 'fs'
           severity: 'CRITICAL,HIGH'
@@ -108,7 +109,7 @@ trivy fs --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 .
 
 ```python
 # nosemgrep: python.lang.security.audit.subprocess-shell
-# Justified: argv is a fixed literal list; reviewed by @sec-team 2026-03-07; expires 2026-09-07
+# Justified: argv is a fixed literal list; reviewed by @sec-team 2026-09-07; expires 2027-03-07
 ```
 
 Track two numbers per repo: the median age of open HIGH findings, and the ratio of suppressed
@@ -124,7 +125,7 @@ to fixed. A rising suppression ratio is the early signal that the gate has stopp
     npx snyk test --severity-threshold=high --fail-on=upgradable       --policy-path=.snyk --sarif-file-output=snyk.sarif
     npx snyk monitor --project-name="$GITHUB_REPOSITORY"   # snapshot for drift alerts
   env: { SNYK_TOKEN: "${{ secrets.SNYK_TOKEN }}" }
-- uses: github/codeql-action/upload-sarif@v3
+- uses: github/codeql-action/upload-sarif@v4
   with: { sarif_file: snyk.sarif }
 ```
 

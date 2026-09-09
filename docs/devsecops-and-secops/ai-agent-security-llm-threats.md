@@ -42,7 +42,7 @@ Two forms, with very different exposure:
 Indirect injection is where real incidents come from. Assume any content the model reads may contain
 instructions, and design so that acting on them is survivable.
 
-## 2. OWASP Top 10 for LLM Applications — the control for each
+## 2. OWASP Top 10 for LLM Applications (2025 edition) — the control for each
 
 | ID | Risk | Control that actually helps |
 | --- | --- | --- |
