@@ -5,10 +5,10 @@ on:
     tags: ["v*.*.*"]
   workflow_dispatch:
     inputs:
-      dry_run:
-        description: "Validate the release without publishing"
-        type: boolean
-        default: true
+      version:
+        description: "Version to validate, e.g. 1.0.0 (default: latest tag)"
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -31,20 +31,42 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0 # tags must be present for the version fallback below
 
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.13"
 
+      # On a tag push ref_name is the tag. On workflow_dispatch it is the branch,
+      # so reading it unconditionally leaked "main" into every version comparison.
       - name: Resolve version
         id: version
         env:
           REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          version="${REF_NAME#v}"
+          set -euo pipefail
+          if [ "$REF_TYPE" = "tag" ]; then
+            version="${REF_NAME#v}"
+          elif [ -n "$INPUT_VERSION" ]; then
+            version="${INPUT_VERSION#v}"
+          else
+            latest="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+            if [ -z "$latest" ]; then
+              echo "::error::no tag found to validate against; supply the 'version' input"
+              exit 1
+            fi
+            version="${latest#v}"
+            echo "No version input; validating against latest tag ${latest}"
+          fi
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::resolved version '${version}' is not semver X.Y.Z"
+            exit 1
+          fi
           echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "Releasing ${version}"
+          echo "Validating ${version}"
 
       - name: Version consistency (tag == plugin.json == CHANGELOG)
         env:
