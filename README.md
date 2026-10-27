@@ -5,6 +5,11 @@
 [![Quality tier](https://img.shields.io/badge/Quality-POWERFUL%20100%2F100-brightgreen.svg)](#quality-gates)
 [![Eval pass rate](https://img.shields.io/badge/Routing%20evals-100%25%20(2%20documented%20residuals)-brightgreen.svg)](#quality-gates)
 [![Runtimes](https://img.shields.io/badge/Runtimes-Claude%20%7C%20Antigravity%20%7C%20Codex%20%7C%20Cursor%20%7C%20Copilot-purple.svg)](#use-it-in-your-agent)
+[![CI](https://github.com/mchittineni/cloud-platform-skills/actions/workflows/skills-ci.yml/badge.svg)](https://github.com/mchittineni/cloud-platform-skills/actions/workflows/skills-ci.yml)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=000000)](https://buymeacoffee.com/mchittineni)
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-24292F?style=for-the-badge&logo=githubsponsors&logoColor=EA4AAA)](https://github.com/sponsors/mchittineni)
 
 43 production-grade, evaluated engineering skills for **Cloud, Platform, SRE, Security and
 FinOps** work — portable across every major AI coding agent, and usable by humans as runbooks,
